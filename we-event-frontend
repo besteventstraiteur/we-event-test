@@ -1,0 +1,33 @@
+# Frontend - React SPA (HTTPS with SSL)
+server {
+    listen 443 ssl;
+    server_name we-event.eu www.we-event.eu;
+
+    root /var/www/html/we-event-frontend/dist;
+    index index.html;
+
+    # SSL Certificates (managed by Certbot)
+    ssl_certificate /etc/letsencrypt/live/we-event.eu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/we-event.eu/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Serve React frontend
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # Serve static assets
+    location /static/ {
+        try_files $uri =404;
+    }
+}
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name we-event.eu www.we-event.eu;
+
+    return 301 https://$host$request_uri;
+}
+

@@ -1,0 +1,607 @@
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+} */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Fonts */
+
+@font-face {
+  font-family: "tahomaregular";
+  src:
+    url("../public/fonts/tahoma-webfont.woff2") format("woff2"),
+    url("../public/fonts/tahoma-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PP Pangaia Ultralight";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("PP Pangaia Ultralight"),
+    url("../public/fonts/PPPangaia-Ultralight-BF654c530cd00f1.woff")
+      format("woff");
+}
+
+@font-face {
+  font-family: "PP Pangaia Ultralight Italic";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("PP Pangaia Ultralight Italic"),
+    url("../public/fonts/PPPangaia-UltralightItalic-BF654c530ca889f.woff")
+      format("woff");
+}
+
+@font-face {
+  font-family: "PP Pangaia Medium";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("PP Pangaia Medium"),
+    url("../public/fonts/PPPangaia-Medium-BF654c530cc86d5.woff") format("woff");
+}
+
+@font-face {
+  font-family: "PP Pangaia Medium Italic";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("PP Pangaia Medium Italic"),
+    url("../public/fonts/PPPangaia-MediumItalic-BF654c530bedffb.woff")
+      format("woff");
+}
+
+@font-face {
+  font-family: "PP Pangaia Bold";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("PP Pangaia Bold"),
+    url("../public/fonts/PPPangaia-Bold-BF654c530cc27f8.woff") format("woff");
+}
+
+@font-face {
+  font-family: "PP Pangaia Bold Italic";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("PP Pangaia Bold Italic"),
+    url("../public/fonts/PPPangaia-BoldItalic-BF654c530c8d2fa.woff")
+      format("woff");
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Homepage landing page */
+
+body {
+  overflow: visible !important;
+}
+
+/* Hero Section */
+
+.hero-section {
+  background-color: hsla(0, 0%, 100%, 1);
+  background-image:
+    radial-gradient(at 84% 34%, hsla(17, 80%, 95%, 1) 0px, transparent 50%),
+    radial-gradient(at 21% 5%, hsla(23, 68%, 96%, 1) 0px, transparent 50%),
+    radial-gradient(at 59% 19%, hsla(18, 72%, 95%, 1) 0px, transparent 50%),
+    radial-gradient(at 93% 88%, hsla(36, 55%, 96%, 1) 0px, transparent 50%),
+    radial-gradient(at 37% 53%, hsla(40, 53%, 92%, 1) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(18, 72%, 95%, 1) 0px, transparent 50%);
+}
+
+/* Homepage */
+
+.gradient-wrapper {
+  background-color: hsla(0, 0%, 100%, 1);
+  background-image:
+    radial-gradient(at 38% 42%, hsla(28, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 77% 7%, hsla(48, 55%, 98%, 1) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(0, 100%, 98%, 1) 0px, transparent 50%),
+    radial-gradient(at 90% 37%, hsla(0, 100%, 98%, 1) 0px, transparent 50%),
+    radial-gradient(at 7% 99%, hsla(209, 30%, 96%, 1) 0px, transparent 50%),
+    radial-gradient(at 78% 68%, hsla(209, 30%, 96%, 1) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(0, 42%, 98%, 1) 0px, transparent 50%);
+
+  background-size: 200% 200%; /* make it bigger than container */
+  animation: gradientMove 10s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.swiper-pagination {
+  position: static !important;
+  margin-top: 50px;
+}
+
+.swiper-pagination-bullet {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #093b56 !important;
+  width: 36px !important;
+  border-radius: 8px !important;
+}
+
+.section-gradient {
+  background-color: hsla(0, 0%, 100%, 1);
+  background-image:
+    radial-gradient(at 71% 100%, hsla(276, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 65% 100%, hsla(195, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 21% 100%, hsla(69, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 71% 74%, hsla(38, 54%, 93%, 1) 0px, transparent 50%),
+    radial-gradient(at 5% 18%, hsla(40, 56%, 92%, 1) 0px, transparent 50%),
+    radial-gradient(at 91% 30%, hsla(30, 61%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 33% 100%, hsla(91, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 47% 18%, hsla(40, 56%, 92%, 1) 0px, transparent 50%),
+    radial-gradient(at 40% 61%, hsla(30, 61%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 77% 76%, hsla(40, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 79% 79%, hsla(0, 0%, 100%, 1) 0px, transparent 50%),
+    radial-gradient(at 75% 70%, hsla(96, 0%, 100%, 1) 0px, transparent 50%);
+}
+
+/* partner page */
+
+.css-13cymwt-control {
+  border-radius: 9999px !important;
+}
+
+/* .custom-search input{
+  border-radius:calc(infinity * 1px) !important;
+} */
+
+.css-t3ipsp-control,
+.css-t3ipsp-control:focus {
+  border-radius: 9999px !important;
+  border-color: var(--color-inputborder) !important;
+  box-shadow: none !important;
+}
+
+/* Dashboard */
+
+.progress {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#699f9c+0,d6be7d+25,699f9c+59,d6be7d+100 */
+  background: linear-gradient(
+    to right,
+    rgba(105, 159, 156, 1) 0%,
+    rgba(214, 190, 125, 1) 25%,
+    rgba(105, 159, 156, 1) 59%,
+    rgba(214, 190, 125, 1) 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+
+.react-datepicker-wrapper {
+  display: block !important;
+}
+
+.mobile-mode > div {
+  position: static;
+}
+
+.dark .ql-editor {
+  color: white;
+}
+
+.dark .ql-container {
+  border-color: var(--color-neutral-700) !important;
+}
+
+.dark .ql-toolbar {
+  background-color: var(--color-neutral-800);
+  color: white;
+  border-color: var(--color-neutral-700) !important;
+}
+
+.dark .ql-container {
+  background-color: var(--color-neutral-800);
+}
+
+.dark .custom-select-container div.rounded-full {
+  background-color: var(--color-neutral-800);
+  color: white;
+  border-color: var(--color-neutral-700);
+}
+
+.dark .custom-select-container div.rounded-full * {
+  color: white;
+}
+
+.custom-select-container div.rounded-full {
+  border-radius: var(--radius-lg) !important;
+}
+
+.image-effect {
+  --r: 20px; /* the radius */
+  --s: 25px; /* size of inner curve */
+  --x: 10px; /* horizontal offset (no percentage) */
+  --y: 10px; /* vertical offset (no percentage) */
+
+  width: 100%;
+  aspect-ratio: 1;
+  height: clamp(100px, 40vw, 200px);
+  border-radius: var(--r) var(--r) 0 0;
+  --_m: /calc(2 * var(--r)) calc(2 * var(--r))
+    radial-gradient(#000 70%, #0000 72%);
+  --_g: conic-gradient(at calc(100% - var(--r)) var(--r), #0000 25%, #000 0);
+  --_d: (var(--s) + var(--r));
+  mask:
+    calc(100% - var(--_d) - var(--x)) 0 var(--_m),
+    100% calc(var(--_d) + var(--y)) var(--_m),
+    radial-gradient(var(--s) at 100% 0, #0000 99%, #000 calc(100% + 1px))
+      calc(-1 * var(--r) - var(--x)) calc(var(--r) + var(--y)),
+    var(--_g) calc(-1 * var(--_d) - var(--x)) 0,
+    var(--_g) 0 calc(var(--_d) + var(--y));
+  mask-repeat: no-repeat;
+}
+
+.swiper-button-next,
+.swiper-button-prev,
+.custom-next-btn,
+.custom-prev-btn {
+  width: 50px !important;
+  height: 50px !important;
+  padding: 0;
+  background-color: #093b56;
+  border-radius: 100%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s linear;
+}
+
+/* .swiper-button-prev {
+  left: -60px !important;
+} */
+
+/* .swiper-button-next {
+  right: -60px !important;
+} */
+
+.swiper:hover .swiper-button-next,
+.swiper:hover .swiper-button-prev {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* .swiper:hover .swiper-button-next {
+  right: 15px !important;
+} */
+
+/* .swiper:hover .swiper-button-prev {
+  left: 15px !important;
+} */
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+  color: white;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: #0b6495;
+}
+
+.swiper-button-next:hover::after,
+.swiper-button-prev:hover::after {
+  /* color: white; */
+}
+
+.pac-container::after {
+  display: none !important;
+}
+
+.fancybox__slide img {
+  max-height: 80vh;
+  width: auto;
+  object-fit: contain;
+}
+
+.f-panzoom__wrapper {
+  pointer-events: none;
+}
+
+/* Provider image */
+
+#image-slider :is(.swiper-button-next, .swiper-button-prev) {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#image-slider .swiper-button-next {
+  right: 15px !important;
+}
+
+#image-slider .swiper-button-prev {
+  left: 15px !important;
+}
+
+/* Chrome, Edge, Safari, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield; /* hides Firefox arrows */
+}
+
+/* Optional: remove number input arrows on Safari iOS (keeps numeric keyboard) */
+input[type="number"] {
+  appearance: textfield;
+}
+
+/* If you want to remove arrow space / ensure consistent height */
+input[type="number"] {
+  padding-right: 0.5rem; /* adjust if needed */
+}
+
+/* .custom-select {
+  z-index: 9;
+} */
+
+/* Homepage search */
+
+.search-filter .custom-select .border {
+  border: none;
+  padding: 0;
+  align-items: start;
+}
+
+.search-filter .custom-select .border > div {
+  padding: 0;
+}
+
+.search-filter .custom-select .border > div:last-child {
+  margin: 0 !important;
+  align-items: start;
+}
+.search-filter .custom-select .border > div:last-child > span {
+  display: none;
+}
+
+.search-filter .custom-select .border > div:last-child > div {
+  padding: 0;
+}
+
+.rrsa-with-grid {
+  height: auto !important;
+}
+
+.rrsa-grid {
+  display: none !important;
+}
+
+.rrsa-from,
+.rrsa-single,
+.rrsa-to,
+.rrsa-bar,
+.rrsa-bar-edge {
+  background-color: #093b56 !important;
+}
+
+.rrsa-from:after,
+.rrsa-single:after,
+.rrsa-to:after {
+  border-top-color: #093b56 !important;
+}
+
+.rrsa-handle {
+  width: 11px !important;
+}
+
+/* Homepage testimonials without images */
+
+.testimonials-ver2 .swiper-pagination {
+  bottom: 30px !important;
+  margin: 0;
+  position: absolute !important;
+}
+
+/* @media (max-width:767px) {
+  .testimonials-ver2 .swiper-pagination {
+    bottom: 10px !important;
+  }
+} */
+
+.testimonials-ver2 .swiper-button-next,
+.testimonials-ver2 .swiper-button-prev {
+  width: 50px !important;
+  height: 50px !important;
+  padding: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 100%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s linear;
+}
+
+.testimonials-ver2 .swiper-button-next::after,
+.testimonials-ver2 .swiper-button-prev::after {
+  color: white;
+}
+
+.testimonials-ver2 .swiper-pagination-bullet {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1 !important;
+}
+.testimonials-ver2 .swiper-pagination-bullet-active {
+  background-color: white !important;
+  width: 36px !important;
+  border-radius: 8px !important;
+}
+
+:is(.testimonials-ver2, .testimonials-ver1)
+  :is(.swiper-button-prev, .swiper-button-next) {
+  display: none;
+}
+
+button[disabled] {
+  opacity: 0.3;
+}
+
+.z-50 {
+  z-index: 9999;
+}
+
+/* Outer container */
+.auto-height-quill {
+  height: auto !important;
+}
+
+/* Quill container */
+.auto-height-quill .ql-container {
+  height: auto !important;
+  min-height: unset !important;
+}
+
+/* Editor area */
+.auto-height-quill .ql-editor {
+  height: auto !important;
+  min-height: 120px; /* optional default */
+  padding: 12px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+.p-toast {
+  z-index: 999999 !important;
+}
+
+.dark .template-area div[role="presentation"] {
+  border-color: var(--color-borderlight) !important;
+}
+
+.dark .template-area .ql-editor {
+  color: var(--color-mainclr);
+}
+
+.dark .template-area .ql-toolbar {
+  background-color: white;
+  color: var(--color-mainclr);
+}
+
+.dark .template-area .ql-container {
+  background-color: white;
+}
+
+.dark .template-area .custom-select-container div.rounded-full {
+  background-color: white;
+  color: var(--color-mainclr);
+  border-color: var(--color-borderlight);
+}
+
+.dark .custom-select-container div.rounded-full * {
+  color: white;
+}
+
+/* Responsive */
+
+@media (min-width: 1024px) {
+  :is(.testimonials-ver2, .testimonials-ver1)
+    :is(.swiper-button-prev, .swiper-button-next) {
+    display: flex;
+  }
+}
+
+.quill-wrapper .ql-container {
+  min-height: 140px;
+}
+
+.quill-wrapper .ql-editor {
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.ql-font-inter {
+  font-family: "Inter", sans-serif;
+}
+
+.ql-font-montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+
+.ql-font-roboto {
+  font-family: "Roboto", sans-serif;
+}
+
+.ql-font-lato {
+  font-family: "Lato", sans-serif;
+}
+
+.ql-font-opensans {
+  font-family: "Open Sans", sans-serif;
+}
+
+.ql-font-playfair {
+  font-family: "Playfair Display", serif;
+}

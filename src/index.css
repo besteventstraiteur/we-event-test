@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+#root {
+  height: 100%;
+}
+
+@theme {
+  --color-primary: #fffbed;
+  --color-darkbg: #0a0a0a;
+  --color-mainclr: #0c1421;
+  --color-secondary: #093b56;
+  --color-tertiary: #1f79aa;
+  --color-lightbg: #f7fafc;
+  --color-light: #d0d8c5;
+  --color-darkmode:#0A0A0A;
+  --color-inputborder: #d4d7e3;
+  --color-inputdarkborder: #0a0a0a;
+  --color-inputdarkbg: #0a0a0a;
+  --color-inputbg: #f7fbff;
+  --color-borderlight: #d1dbe8;
+  --font-primary: "tahomaregular";
+  --font-secondary: "PP Pangaia Medium";
+}
+
+@layer base {
+  body {
+    @apply font-primary overflow-visible bg-primary dark:text-neutral-300;
+    @apply text-mainclr;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-mainclr font-secondary tracking-wider;
+  }
+
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 20 5% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 5% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 5% 8%;
+
+    --primary: 38 49% 67%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 33 39% 92%;
+    --secondary-foreground: 155 12% 55%;
+
+    --muted: 33 39% 92%;
+    --muted-foreground: 20 5% 45%;
+
+    --accent: 155 12% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 20 5% 90%;
+    --input: 20 5% 90%;
+    --ring: 38 49% 67%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .container-1180 {
+    @apply max-w-[1180px] mx-auto px-4;
+  }
+
+  .container-large {
+    @apply max-w-[1349px] mx-auto px-4;
+  }
+
+  .section-padding-y {
+    @apply py-10 md:py-24;
+  }
+
+  .heading-font {
+    @apply font-secondary tracking-wider;
+  }
+
+  .text-size-5xl {
+    /* 60px */
+    @apply text-4xl md:text-6xl;
+  }
+
+  .text-size-4xl {
+    /* 48px */
+    @apply text-3xl md:text-5xl;
+  }
+
+  .text-size-3xl {
+    /* 36px */
+    @apply text-2xl md:text-4xl;
+  }
+
+  .text-size-2xl {
+    /* 30px */
+    @apply text-xl md:text-3xl;
+  }
+
+  .text-size-xlarge {
+    /* 24px */
+    @apply text-2xl;
+  }
+
+  .text-size-large {
+    /* 20px */
+    @apply text-xl;
+  }
+
+  .text-size-medium {
+    /* 18px */
+    @apply text-lg;
+  }
+
+  .text-size-regular {
+    @apply text-base;
+  }
+}
