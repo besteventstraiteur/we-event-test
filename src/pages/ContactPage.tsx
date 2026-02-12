@@ -168,18 +168,20 @@ const ContactPage = () => {
       try {
         // Only fetch if BASEURL is configured
         if (!ADMIN.PAGES || ADMIN.PAGES === 'undefined/pages') {
-          console.warn('API endpoint not configured - using default values');
+          // Silently skip API call if not configured
           return;
         }
         const resp = await getRequest(`${ADMIN.PAGES}/6`);
         const data = resp?.data?.data as ContactPageApi | undefined;
         if (data) {
           setPage(data);
-        } else {
-          console.error("Content structure not as expected:", resp);
         }
       } catch (e) {
-        console.error("Failed to load contact content", e);
+        // Silently handle API errors in development
+        // The app will work with default values
+        if (import.meta.env.DEV) {
+          console.debug('API not available - using default values');
+        }
       }
     };
     fetchContent();
