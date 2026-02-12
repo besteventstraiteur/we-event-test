@@ -533,7 +533,7 @@ const ContactPage = () => {
                         >
                           <InputGroup
                             type="text"
-                            label="Adresse (optionnel)"
+                            label="Adresse"
                             placeholder="Votre adresse"
                             inputProps={{
                               ...register("address"),
