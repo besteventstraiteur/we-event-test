@@ -65,8 +65,8 @@ const PartnersList = () => {
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedSortBy, setSelectedSortBy] = useState(null);
   const [selectedLimit, setSelectedLimit] = useState({
-    value: 10,
-    label: "10",
+    value: 6,
+    label: "6",
   });
   const [paginationData, setPaginationData] = useState();
   const [page, setPage] = useState(1);
@@ -93,9 +93,9 @@ const PartnersList = () => {
   ];
 
   const limitOptions = [
-    { value: 10, label: "10" },
-    { value: 15, label: "15" },
-    { value: 20, label: "20" },
+    { value: 6, label: "6" },
+    { value: 12, label: "12" },
+    { value: 18, label: "18" },
   ];
 
   const googleOptions = useMemo(
@@ -255,7 +255,7 @@ const PartnersList = () => {
     setPage(page);
 
     setSelectedLimit(
-      limitOptions.find((l) => l.value === limit) || { value: 10, label: "10" }
+      limitOptions.find((l) => l.value === limit) || { value: 6, label: "6" }
     );
 
     if (lat && long) setLatLng({ lat, long });
