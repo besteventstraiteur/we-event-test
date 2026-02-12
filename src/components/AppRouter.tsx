@@ -23,6 +23,7 @@ import TermsPage from "../pages/TermsPage";
 import PrivacyPage from "../pages/PrivacyPage";
 import Providerdetails from "../pages/Provider-details";
 import ProviderDetailsNew from "../pages/ProviderDetailsNew";
+import ProviderDetailsV2 from "../pages/ProviderDetailsV2";
 import ClientDashboardLayout from "../module/layout/ClientDashboardLayout";
 import ProviderRoutes from "../routes/ProviderRoutes";
 import ClientRequests from "../pages/client/Requests";
@@ -66,6 +67,14 @@ const AppRouter: React.FC = () => {
             element={
               <Suspense fallback={<LazyLoadingFallback />}>
                 <Providerdetails />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/partners-v2/:id"
+            element={
+              <Suspense fallback={<LazyLoadingFallback />}>
+                <ProviderDetailsV2 />
               </Suspense>
             }
           />
