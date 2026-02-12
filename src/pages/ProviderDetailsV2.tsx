@@ -20,6 +20,7 @@ import {
   Award,
   Heart,
   MessageCircle,
+  X,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { motion } from "motion/react";
@@ -113,7 +114,7 @@ const ProviderDetailsV2 = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const user = useSelector((state: any) => state.auth.user);
+  const user = useSelector((state: any) => state?.auth?.user || null);
   
   const [profile, setProfile] = useState<BusinessProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -539,7 +540,7 @@ const ProviderDetailsV2 = () => {
       >
         <div className="modal-content">
           <button className="modal-close" onClick={() => setShowQuoteModal(false)}>
-            <Share2 size={24} />
+            <X size={24} />
           </button>
           <h2>Demander un devis</h2>
           <RequestForm profile={profile} />
@@ -553,7 +554,7 @@ const ProviderDetailsV2 = () => {
       >
         <div className="modal-content">
           <button className="modal-close" onClick={() => setShowShareModal(false)}>
-            <Share2 size={24} />
+            <X size={24} />
           </button>
           <h2>Partager</h2>
           <ProviderShare />
