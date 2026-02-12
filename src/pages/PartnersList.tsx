@@ -31,6 +31,7 @@ import { useSelector } from "react-redux";
 import MyFavorite from "../components/ui/MyFavorite";
 import { SimpleRangeSlider } from "react-range-slider-advanced";
 import "react-range-slider-advanced/style.css";
+import { fakePartners, fakeCategories } from "../data/fakePartners";
 
 const customStyles = {
   control: (provided, state) => ({
@@ -177,8 +178,20 @@ const PartnersList = () => {
         setHasMore(false);
       }
     } catch (err) {
-      if (!append) setPartners([]);
-      setHasMore(false);
+      // Use fake data when API is not available
+      if (import.meta.env.DEV) {
+        console.debug('API not available - using fake partner data');
+        setPartners(fakePartners);
+        setPaginationData({ 
+          totalCount: fakePartners.length, 
+          currentPage: 1, 
+          totalPages: 1 
+        });
+        setHasMore(false);
+      } else {
+        if (!append) setPartners([]);
+        setHasMore(false);
+      }
     } finally {
       setLoadingData(false);
     }
@@ -196,6 +209,23 @@ const PartnersList = () => {
             label: c.name,
           }))
           .sort((a, b) => a.label.localeCompare(b.label));
+
+        setCategories(opts);
+      }
+    } catch (err) {
+      // Use fake categories when API is not available
+      if (import.meta.env.DEV) {
+        console.debug('API not available - using fake categories');
+        const opts = fakeCategories.map(c => ({
+          value: c.id,
+          label: c.name
+        }));
+        setCategories(opts);
+      }
+    } finally {
+      setLoadingCats(false);
+    }
+  };
 
         setCategories(opts);
       } else {
