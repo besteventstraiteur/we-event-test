@@ -1,0 +1,122 @@
+/* Provider Details New - Modern Design */
+
+/* Hero Slider Styles */
+.provider-hero-slider {
+  width: 100%;
+  height: 100%;
+}
+
+.provider-hero-slider .swiper-button-next,
+.provider-hero-slider .swiper-button-prev {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.provider-hero-slider .swiper-button-next:hover,
+.provider-hero-slider .swiper-button-prev:hover {
+  background: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.provider-hero-slider .swiper-button-next::after,
+.provider-hero-slider .swiper-button-prev::after {
+  font-size: 20px;
+  font-weight: 700;
+  color: #093B56;
+}
+
+.provider-hero-slider .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: white;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.provider-hero-slider .swiper-pagination-bullet-active {
+  width: 30px;
+  border-radius: 5px;
+  opacity: 1;
+  background: #093B56;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animation Classes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Custom Scrollbar */
+.provider-details-new::-webkit-scrollbar {
+  width: 8px;
+}
+
+.provider-details-new::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.provider-details-new::-webkit-scrollbar-thumb {
+  background: #093B56;
+  border-radius: 4px;
+}
+
+.provider-details-new::-webkit-scrollbar-thumb:hover {
+  background: #0a4a6b;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .provider-hero-slider .swiper-button-next,
+  .provider-hero-slider .swiper-button-prev {
+    width: 40px;
+    height: 40px;
+  }
+
+  .provider-hero-slider .swiper-button-next::after,
+  .provider-hero-slider .swiper-button-prev::after {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .provider-hero-slider .swiper-button-next,
+  .provider-hero-slider .swiper-button-prev {
+    width: 36px;
+    height: 36px;
+  }
+
+  .provider-hero-slider .swiper-button-next::after,
+  .provider-hero-slider .swiper-button-prev::after {
+    font-size: 14px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .provider-details-new header,
+  .provider-details-new .sticky,
+  .provider-details-new button {
+    display: none !important;
+  }
+}
