@@ -1,4 +1,4 @@
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Send, CheckCircle2, HelpCircle } from "lucide-react";
 import Accordion from "../components/contact/Faq";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -127,17 +127,31 @@ const ContactPage = () => {
 
   return (
     <div data-no-translate>
-      <div className="pt-32 pb-12 md:pb-24 md:pt-36">
+      <div className="pt-32 pb-12 md:pb-24 md:pt-36 bg-gradient-to-b from-gray-50 to-white">
         <div className="container">
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: false, amount: 0.3 }}
-            className="text-size-4xl text-center font-semibold"
+            className="text-center mb-4"
           >
-            Contactez-nous
-          </motion.h1>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-we-green/10 rounded-full mb-4"
+            >
+              <Mail className="w-5 h-5 text-we-green" />
+              <span className="text-sm font-medium text-we-green">Nous sommes là pour vous</span>
+            </motion.div>
+            <h1 className="text-size-4xl font-semibold mb-3 bg-gradient-to-r from-we-green to-emerald-600 bg-clip-text text-transparent">
+              Contactez-nous
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Notre équipe est à votre disposition pour répondre à toutes vos questions et vous accompagner dans votre projet
+            </p>
+          </motion.div>
         </div>
 
         <section className="pt-9 section-padding-y">
@@ -145,19 +159,27 @@ const ContactPage = () => {
             <div className="flex gap-8 flex-wrap lg:flex-nowrap">
               {/* Left: Enquiry form */}
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 viewport={{ once: false, amount: 0.3 }}
                 className="w-full lg:w-2/3"
               >
                 <form
                   onSubmit={handleSubmit(handleContactSubmit)}
-                  className="contact-wrapper bg-white rounded-2xl p-9 space-y-5 shadow-sm"
+                  className="contact-wrapper bg-white rounded-2xl p-9 space-y-5 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
                 >
-                  <h2 className="text-3xl font-semibold mb-2">
-                    Demande de renseignements
-                  </h2>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-we-green/10 rounded-full flex items-center justify-center">
+                      <Send className="w-6 h-6 text-we-green" />
+                    </div>
+                    <div>
+                      <h2 className="text-3xl font-semibold">
+                        Demande de renseignements
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">Réponse sous 24h</p>
+                    </div>
+                  </div>
                   <p className="text-gray-600">
                     Notre équipe est à votre disposition pour vous accompagner
                     dans l’organisation de votre événement.
@@ -219,8 +241,13 @@ const ContactPage = () => {
                       type="submit"
                       variant="primary"
                       size="large"
+                      className="relative overflow-hidden group"
                     >
-                      Envoyer
+                      <span className="relative z-10 flex items-center gap-2">
+                        <Send className="w-5 h-5" />
+                        Envoyer
+                      </span>
+                      <span className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-we-green transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
                     </Button>
                   </div>
                 </form>
@@ -228,59 +255,53 @@ const ContactPage = () => {
 
               <div className="w-full lg:w-1/3 space-y-4">
                 <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  initial={{ opacity: 0, x: 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
                   viewport={{ once: false, amount: 0.3 }}
-                  className="bg-white p-6 rounded-2xl shadow-sm"
+                  whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                  className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group"
                 >
-                  <h4 className="text-2xl font-semibold mb-4">
-                    Contactez-nous
-                  </h4>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-we-green/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Mail className="w-5 h-5 text-we-green" />
+                    </div>
+                    <h4 className="text-2xl font-semibold">Contactez-nous</h4>
+                  </div>
                   <div className="space-y-4">
                     {email && (
-                      <a
+                      <motion.a
+                        whileHover={{ x: 5 }}
                         href={`mailto:${email}`}
-                        className="flex items-start gap-2 hover:text-tertiary"
+                        className="flex items-start gap-3 hover:text-we-green transition-colors duration-300 p-3 rounded-lg hover:bg-gray-50"
                       >
-                        <Mail size={18} className="flex-shrink-0" />
+                        <Mail size={18} className="flex-shrink-0 mt-1" />
                         <span className="text-base leading-4">{email}</span>
-                      </a>
+                      </motion.a>
                     )}
 
                     {email && (
-                      <a
+                      <motion.a
+                        whileHover={{ x: 5 }}
                         href="mailto:jeff@we-event.eu"
-                        className="flex items-start gap-2 hover:text-tertiary"
+                        className="flex items-start gap-3 hover:text-we-green transition-colors duration-300 p-3 rounded-lg hover:bg-gray-50"
                       >
-                        <Mail size={18} className="flex-shrink-0" />
+                        <Mail size={18} className="flex-shrink-0 mt-1" />
                         <span className="text-base leading-4">
                           jeff@we-event.eu
                         </span>
-                      </a>
+                      </motion.a>
                     )}
 
-                    {/* {phone && (
-                      <a href={`tel:${phone}`} className="flex gap-2 group">
-                        <PhoneCall className="text-we-green" />
-                        <span className="font-inter transition-all duration-300 group-hover:text-we-green">
-                          {phone}
-                        </span>
-                      </a>
-                    )} */}
-
-                    {/* {address && (
-                      <div className="flex gap-2">
-                        <MapPin size={20} className="flex-shrink-0" />
-                        <span>{address}</span>
-                      </div>
-                    )} */}
-                    <div className="flex items-start gap-2">
-                      <MapPin size={20} className="flex-shrink-0" />
+                    <motion.div 
+                      whileHover={{ x: 5 }}
+                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-all duration-300"
+                    >
+                      <MapPin size={20} className="flex-shrink-0 mt-1 text-we-green" />
                       <span className="text-base leading-4">
                         93 Avenue du Général de Gaulle 83300 Draguignan
                       </span>
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.div>
 
@@ -316,10 +337,23 @@ const ContactPage = () => {
           className="section-padding-y pt-0"
         >
           <div className="container-1180">
-            <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-10">
-                Faqs
+            <div className="text-center mb-12">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                viewport={{ once: false }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-we-green/10 rounded-full mb-4"
+              >
+                <HelpCircle className="w-5 h-5 text-we-green" />
+                <span className="text-sm font-medium text-we-green">Questions fréquentes</span>
+              </motion.div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold bg-gradient-to-r from-we-green to-emerald-600 bg-clip-text text-transparent">
+                Tout ce que vous devez savoir
               </h2>
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                Trouvez rapidement les réponses à vos questions les plus courantes
+              </p>
             </div>
             <Accordion />
           </div>
@@ -334,14 +368,31 @@ const ContactPage = () => {
           viewport={{ once: false, amount: 0.3 }}
         >
           <div className="container-1180">
-            <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-10">
+            <div className="text-center mb-12">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                viewport={{ once: false }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-we-green/10 rounded-full mb-4"
+              >
+                <MapPin className="w-5 h-5 text-we-green" />
+                <span className="text-sm font-medium text-we-green">Nous trouver</span>
+              </motion.div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold bg-gradient-to-r from-we-green to-emerald-600 bg-clip-text text-transparent">
                 Notre Bureau sur la Carte
               </h2>
-              <div className="rounded-3xl overflow-hidden">
-                <OfficeMap />
-              </div>
+              <p className="text-gray-600 mt-4">
+                Venez nous rendre visite à notre bureau de Draguignan
+              </p>
             </div>
+            <motion.div 
+              className="rounded-3xl overflow-hidden shadow-2xl border border-gray-200"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+            >
+              <OfficeMap />
+            </motion.div>
           </div>
         </motion.section>
       </div>
