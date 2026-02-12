@@ -445,12 +445,12 @@ const ContactPage = () => {
               className="lg:col-span-2 space-y-6"
             >
               {/* Opening Hours Card */}
-              <div className="bg-gradient-to-br from-we-green to-emerald-600 rounded-3xl p-8 shadow-xl text-white">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                    <Clock className="w-6 h-6" />
+                  <div className="w-12 h-12 bg-we-green/10 rounded-xl flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-we-green" />
                   </div>
-                  <h3 className="text-2xl font-bold">Horaires</h3>
+                  <h3 className="text-2xl font-bold text-gray-900">Horaires</h3>
                 </div>
                 
                 <div className="space-y-4">
@@ -464,10 +464,10 @@ const ContactPage = () => {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="flex justify-between items-center py-3 border-b border-white/20 last:border-0"
+                      className="flex justify-between items-center py-3 border-b border-gray-200 last:border-0"
                     >
-                      <span className="font-medium">{schedule.day}</span>
-                      <span className={`font-bold ${schedule.open ? 'text-white' : 'text-white/60'}`}>
+                      <span className="font-medium text-gray-700">{schedule.day}</span>
+                      <span className={`font-bold ${schedule.open ? 'text-we-green' : 'text-red-500'}`}>
                         {schedule.hours}
                       </span>
                     </motion.div>
