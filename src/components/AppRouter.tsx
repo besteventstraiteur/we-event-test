@@ -65,7 +65,7 @@ const AppRouter: React.FC = () => {
             path="/partners/:id"
             element={
               <Suspense fallback={<LazyLoadingFallback />}>
-                <ProviderDetailsNew />
+                <Providerdetails />
               </Suspense>
             }
           />
