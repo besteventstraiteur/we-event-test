@@ -947,7 +947,7 @@ const Providerdetails = () => {
                       ) : (
                         <>
                           {isVerified && (
-                            <span className="absolute top-3 right-3 flex gap-1 items-center text-sm rounded-sm bg-green-500 px-2 py-1 text-white">
+                            <span className="absolute top-3 right-3 flex gap-1 items-center text-sm rounded-sm bg-[#093B56] px-2 py-1 text-white shadow-lg">
                               <ShieldCheck size={16} /> Vérifié
                             </span>
                           )}
