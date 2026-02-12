@@ -585,8 +585,7 @@ const Providerdetails = () => {
                         >
                           {portfolioImages.map((src, idx) => (
                             <SwiperSlide key={idx}>
-                              <div className="media-slide rounded-2xl overflow-hidden w-full aspect-video bg-black/5">
-                                {/* Wrap image with <a> for Fancybox */}
+                              <div className="media-slide rounded-2xl overflow-hidden w-full aspect-video">
                                 <a
                                   href={src}
                                   data-fancybox="portfolio"
@@ -594,13 +593,7 @@ const Providerdetails = () => {
                                   <img
                                     src={thumbnails[idx] || src}
                                     alt={`portfolio-${idx + 1}`}
-                                    className="w-full h-full cursor-pointer"
-                                    onLoad={(e) => {
-                                      const img = e.target as HTMLImageElement;
-                                      const orientation = img.naturalWidth > img.naturalHeight ? 'landscape' : 'portrait';
-                                      img.setAttribute('data-orientation', orientation);
-                                      img.style.objectFit = orientation === 'landscape' ? 'cover' : 'contain';
-                                    }}
+                                    className="w-full h-full object-cover cursor-pointer"
                                   />
                                 </a>
                               </div>

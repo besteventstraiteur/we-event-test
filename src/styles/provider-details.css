@@ -19,48 +19,27 @@
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   aspect-ratio: 16 / 9;
-  background: #f9fafb;
 }
 
 #image-slider .swiper-slide {
   height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f9fafb;
 }
 
 #image-slider .swiper-slide img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-/* Portrait images will use contain to show full image with letterbox */
-#image-slider .swiper-slide img[data-orientation="portrait"] {
-  object-fit: contain;
-}
-
-/* Landscape images will use cover to fill the container */
-#image-slider .swiper-slide img[data-orientation="landscape"] {
   object-fit: cover;
 }
 
 #image-slider .media-slide {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f9fafb;
 }
 
 #image-slider .media-slide img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 #image-slider .swiper-button-next,
