@@ -21,6 +21,9 @@ import {
   Heart,
   MessageCircle,
   X,
+  FileText,
+  Video,
+  Download,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { motion } from "motion/react";
@@ -229,7 +232,6 @@ const ProviderDetailsV2 = () => {
           <div className="hero-content">
             <Link to="/partners" className="back-link">
               <ArrowLeft size={20} />
-              <span>Retour</span>
             </Link>
             
             <div className="hero-info">
@@ -409,6 +411,86 @@ const ProviderDetailsV2 = () => {
               </motion.section>
             )}
 
+            {/* Videos Section */}
+            {profile?.BusinessVideo && profile.BusinessVideo.length > 0 && (
+              <motion.section
+                className="section-card"
+                initial={{ y: 40, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="section-header">
+                  <Video size={24} />
+                  <h2>Vidéos</h2>
+                  <span className="count-badge">{profile.BusinessVideo.length}</span>
+                </div>
+                <div className="videos-grid">
+                  {profile.BusinessVideo.map((video, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="video-item"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1, duration: 0.4 }}
+                    >
+                      <div className="video-wrapper">
+                        <iframe
+                          src={video.url.replace('watch?v=', 'embed/')}
+                          title={`Vidéo ${idx + 1}`}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+
+            {/* Documents Section */}
+            {profile?.BusinessDocument && profile.BusinessDocument.length > 0 && (
+              <motion.section
+                className="section-card"
+                initial={{ y: 40, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="section-header">
+                  <FileText size={24} />
+                  <h2>Documents</h2>
+                  <span className="count-badge">{profile.BusinessDocument.length}</span>
+                </div>
+                <div className="documents-list">
+                  {profile.BusinessDocument.map((doc, idx) => (
+                    <motion.a
+                      key={idx}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="document-item"
+                      initial={{ x: -20, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.05, duration: 0.4 }}
+                    >
+                      <div className="document-icon">
+                        <FileText size={24} />
+                      </div>
+                      <div className="document-info">
+                        <div className="document-name">{doc.name}</div>
+                        <div className="document-type">{doc.type.toUpperCase()}</div>
+                      </div>
+                      <Download size={20} className="download-icon" />
+                    </motion.a>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+
             {/* Reviews Section */}
             {profile?.BusinessReview && profile.BusinessReview.length > 0 && (
               <motion.section
@@ -496,26 +578,49 @@ const ProviderDetailsV2 = () => {
 
                 {/* Social Links */}
                 <div className="social-links">
-                  {profile?.fbUrl && (
-                    <a href={profile.fbUrl} target="_blank" rel="noopener noreferrer">
-                      <Facebook size={20} />
-                    </a>
-                  )}
-                  {profile?.inUrl && (
-                    <a href={profile.inUrl} target="_blank" rel="noopener noreferrer">
-                      <Instagram size={20} />
-                    </a>
-                  )}
-                  {profile?.liUrl && (
-                    <a href={profile.liUrl} target="_blank" rel="noopener noreferrer">
-                      <Linkedin size={20} />
-                    </a>
-                  )}
-                  {profile?.ytUrl && (
-                    <a href={profile.ytUrl} target="_blank" rel="noopener noreferrer">
-                      <Youtube size={20} />
-                    </a>
-                  )}
+                  <a 
+                    href={profile?.fbUrl || "https://facebook.com"} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    title="Facebook"
+                  >
+                    <Facebook size={20} />
+                  </a>
+                  <a 
+                    href={profile?.inUrl || "https://instagram.com"} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    title="Instagram"
+                  >
+                    <Instagram size={20} />
+                  </a>
+                  <a 
+                    href="https://pinterest.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    title="Pinterest"
+                    className="pinterest-icon"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/>
+                    </svg>
+                  </a>
+                  <a 
+                    href={profile?.xUrl || "https://x.com"} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    title="X (Twitter)"
+                  >
+                    <X size={20} />
+                  </a>
+                  <a 
+                    href={profile?.liUrl || "https://linkedin.com"} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    title="LinkedIn"
+                  >
+                    <Linkedin size={20} />
+                  </a>
                 </div>
               </div>
 
