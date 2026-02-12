@@ -5,44 +5,170 @@ import { motion, AnimatePresence } from "motion/react";
 export default function AccordionStatic() {
   const faqs = [
     {
-      question: "Quels sont les avantages concrets pour un client ?",
+      question: "Qu'est-ce que We Event exactement ?",
       answer: `
-        <p>Organiser un événement n'a jamais été aussi simple !</p>
+        <p>We Event est une plateforme digitale innovante qui révolutionne l'organisation d'événements en France et en Europe.</p>
         <br/>
-        <p>Avec votre tableau de bord personnel, vous pouvez :</p>
-        <ul style="list-style: disc; margin-left: 20px;">
-          <li>Inviter vos invités et suivre leurs réponses RSVP,</li>
-          <li>Construire votre plan de table en quelques clics,</li>
-          <li>Gérer votre budget en temps réel,</li>
-          <li>Comparer et réserver des prestataires de confiance,</li>
-        </ul>
+        <p>Nous mettons en relation les particuliers et les entreprises avec des professionnels de l'événementiel qualifiés, tout en offrant des outils de gestion complets pour planifier chaque détail de A à Z.</p>
+        <p><strong>Notre mission :</strong> rendre l'organisation d'événements accessible, transparente et sans stress.</p>
       `,
-      category: "client"
+      category: "about"
     },
     {
-      question: "Et pour les prestataires, qu'est-ce que j'y gagne ?",
+      question: "We Event est-elle faite pour moi ?",
       answer: `
-        <p>Avec We Event, vous accédez à un puissant CRM dédié aux événements :</p>
+        <p>We Event s'adresse à deux types d'utilisateurs :</p>
+        <br/>
+        <p><strong>Les organisateurs d'événements (particuliers et entreprises) :</strong></p>
+        <p>Mariages, anniversaires, séminaires, événements d'entreprise, baptêmes, fêtes... Vous cherchez à organiser un événement de manière simple et professionnelle.</p>
+        <br/>
+        <p><strong>Les professionnels de l'événementiel :</strong></p>
+        <p>Traiteurs, photographes, DJ, décorateurs, loueurs de matériel, salles de réception... Vous souhaitez développer votre activité et trouver de nouveaux clients facilement.</p>
+      `,
+      category: "about"
+    },
+    {
+      question: "Quels types d'événements puis-je organiser avec We Event ?",
+      answer: `
+        <p><strong>Tous types d'événements !</strong></p>
+        <br/>
+        <p>Mariages, anniversaires, baptêmes, communions, événements d'entreprise (séminaires, team building, lancements de produits), soirées privées, festivals, galas, conférences...</p>
+        <br/>
+        <p>Que votre événement rassemble 20 ou 2000 personnes, We Event vous accompagne avec les bons outils et les bons professionnels.</p>
+      `,
+      category: "services"
+    },
+    {
+      question: "Comment We Event se différencie des autres plateformes ?",
+      answer: `
+        <p><strong>Une approche tout-en-un unique</strong></p>
+        <br/>
+        <p>Contrairement aux annuaires classiques, We Event combine :</p>
         <ul style="list-style: disc; margin-left: 20px;">
-          <li>Centralisez vos contacts et vos propositions,</li>
-          <li>Suivez vos factures et paiements,</li>
-          <li>Mettez en valeur votre portfolio avec photos et vidéos,</li>
-          <li>Obtenez des statistiques intelligentes sur vos performances,</li>
-          <li>Gagnez en visibilité auprès de centaines de nouveaux clients.</li>
+          <li>Un espace de gestion complet (budget, invités, plan de table, timeline)</li>
+          <li>Un marketplace de prestataires vérifiés avec avis clients</li>
+          <li>Un système de réservation et paiement sécurisé intégré</li>
+          <li>Des outils CRM professionnels pour les prestataires</li>
         </ul>
+        <br/>
+        <p>Tout est centralisé : plus besoin de jongler entre 10 applications différentes !</p>
+      `,
+      category: "services"
+    },
+    {
+      question: "Dois-je payer pour utiliser We Event en tant qu'organisateur ?",
+      answer: `
+        <p><strong>L'inscription est gratuite pour les organisateurs !</strong></p>
+        <br/>
+        <p>Créer votre compte, explorer les prestataires, utiliser les outils de planification de base est entièrement gratuit.</p>
+        <p>Vous ne payez que lorsque vous réservez des prestations via la plateforme, avec une transparence totale sur les tarifs.</p>
+        <br/>
+        <p>Des options premium peuvent être disponibles pour accéder à des fonctionnalités avancées (gestion d'invités illimitée, plans de table personnalisés...).</p>
+      `,
+      category: "paiement"
+    },
+    {
+      question: "Les prestataires sur We Event sont-ils vérifiés ?",
+      answer: `
+        <p><strong>Oui, tous nos professionnels sont sélectionnés avec soin</strong></p>
+        <br/>
+        <p>Chaque prestataire sur We Event :</p>
+        <ul style="list-style: disc; margin-left: 20px;">
+          <li>Est vérifié (documents professionnels, assurances)</li>
+          <li>Dispose d'un portfolio avec photos et vidéos de ses réalisations</li>
+          <li>Reçoit des avis clients authentiques après chaque prestation</li>
+          <li>S'engage sur une charte qualité</li>
+        </ul>
+        <br/>
+        <p>Vous réservez en toute confiance !</p>
       `,
       category: "prestataire"
     },
     {
-      question: "Comment fonctionnent les abonnements et les paiements ?",
+      question: "Comment puis-je contacter un prestataire ?",
       answer: `
-        <p>Tout est pensé pour la simplicité et la transparence.</p>
+        <p><strong>Contactez directement via la plateforme</strong></p>
         <br/>
-        <p>Nos abonnements sont disponibles pour 12, 24 ou 36 mois à des tarifs attractifs.</p>
-        <p>Les paiements peuvent être effectués par virement bancaire, carte de crédit ou prélèvement SEPA sécurisé.</p>
-        <p>Vous recevez automatiquement vos factures, et toutes les transactions passent par Stripe, le leader mondial des solutions de paiement en ligne.</p>
+        <p>Sur chaque profil prestataire, vous pouvez :</p>
+        <ul style="list-style: disc; margin-left: 20px;">
+          <li>Envoyer un message instantané</li>
+          <li>Demander un devis personnalisé</li>
+          <li>Programmer un rendez-vous téléphonique ou visio</li>
+          <li>Comparer plusieurs propositions côte à côte</li>
+        </ul>
+        <br/>
+        <p>Toutes vos conversations sont centralisées dans votre tableau de bord.</p>
+      `,
+      category: "services"
+    },
+    {
+      question: "Comment fonctionne la tarification pour les professionnels ?",
+      answer: `
+        <p><strong>Des abonnements flexibles et rentables</strong></p>
+        <br/>
+        <p>Les professionnels choisissent parmi nos formules d'abonnement (12, 24 ou 36 mois) qui leur donnent accès à :</p>
+        <ul style="list-style: disc; margin-left: 20px;">
+          <li>Un profil professionnel complet avec portfolio</li>
+          <li>Un CRM pour gérer clients et devis</li>
+          <li>De la visibilité auprès de milliers d'organisateurs</li>
+          <li>Des statistiques de performance</li>
+          <li>Un système de facturation intégré</li>
+        </ul>
+        <br/>
+        <p><strong>Pas de commission sur les ventes : votre abonnement, c'est tout !</strong></p>
       `,
       category: "paiement"
+    },
+    {
+      question: "Existe-t-il une application mobile ?",
+      answer: `
+        <p><strong>Bientôt disponible !</strong></p>
+        <br/>
+        <p>Nous travaillons actuellement sur nos applications iOS et Android pour vous permettre de gérer vos événements en mobilité.</p>
+        <p>En attendant, notre site web est entièrement responsive et s'adapte parfaitement à votre smartphone ou tablette.</p>
+      `,
+      category: "services"
+    },
+    {
+      question: "We Event est-elle disponible dans toute la France ?",
+      answer: `
+        <p><strong>Oui, et même au-delà !</strong></p>
+        <br/>
+        <p>We Event couvre l'ensemble du territoire français et s'étend progressivement en Europe.</p>
+        <p>Notre réseau de prestataires est présent dans toutes les régions.</p>
+        <p>Où que vous organisiez votre événement, nous avons les professionnels qu'il vous faut.</p>
+      `,
+      category: "services"
+    },
+    {
+      question: "Proposez-vous une assistance pour m'aider à démarrer ?",
+      answer: `
+        <p><strong>Nous vous accompagnons à chaque étape</strong></p>
+        <br/>
+        <ul style="list-style: disc; margin-left: 20px;">
+          <li>Tutoriels vidéo pour découvrir la plateforme</li>
+          <li>Guide pas-à-pas pour votre premier événement</li>
+          <li>Support client réactif par email et téléphone</li>
+          <li>FAQ complète avec réponses aux questions courantes</li>
+          <li>Webinaires pour les professionnels</li>
+        </ul>
+        <br/>
+        <p>Vous n'êtes jamais seul avec We Event !</p>
+      `,
+      category: "support"
+    },
+    {
+      question: "Comment rester informé des nouveautés We Event ?",
+      answer: `
+        <p><strong>Rejoignez notre communauté !</strong></p>
+        <br/>
+        <ul style="list-style: disc; margin-left: 20px;">
+          <li>Inscrivez-vous à notre newsletter pour recevoir conseils, tendances et offres exclusives</li>
+          <li>Suivez-nous sur les réseaux sociaux (Facebook, Instagram, LinkedIn)</li>
+          <li>Consultez notre blog avec des articles inspirants sur l'organisation d'événements</li>
+        </ul>
+      `,
+      category: "support"
     },
     {
       question: "Mes données sont-elles en sécurité avec We Event ?",
@@ -70,9 +196,11 @@ export default function AccordionStatic() {
   );
 
   const categoryColors: Record<string, string> = {
-    client: "from-blue-500 to-cyan-500",
+    about: "from-indigo-500 to-blue-500",
+    services: "from-blue-500 to-cyan-500",
     prestataire: "from-purple-500 to-pink-500",
     paiement: "from-green-500 to-emerald-500",
+    support: "from-yellow-500 to-orange-500",
     securite: "from-orange-500 to-red-500",
   };
 
