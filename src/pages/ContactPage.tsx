@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, Clock, Send, Sparkles, MessageCircle, Calendar, CheckCircle2 } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Send, Sparkles, MessageCircle, Calendar, CheckCircle2, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import Accordion from "../components/contact/Faq";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,7 +9,7 @@ import { ADMIN, AUTH } from "../utils/endPoints";
 import { getRequest, postRequest } from "../utils/http-client/axiosClient";
 import { useToast } from "../utils/toast";
 import { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import OfficeMap from "../module/Contact/Map";
 
 // ---------------- Types ----------------
@@ -23,6 +23,19 @@ type SharedContent = {
     saturday?: { start?: string; end?: string };
     sundayClosed?: boolean;
   };
+};
+
+// Define the content structure
+type ContactPageContent = {
+  email?: string;
+  phone?: string;
+  address?: string;
+  businessHours?: {
+    weekdays?: { start?: string; end?: string };
+    saturday?: { start?: string; end?: string };
+    sundayClosed?: boolean;
+  };
+  faqs?: FAQItem[];
 };
 
 // This type correctly represents the object at `response.data.content`
@@ -64,6 +77,7 @@ const ContactPage = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState<ContactPageApi | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -76,24 +90,89 @@ const ContactPage = () => {
     formState: { errors },
     reset,
     watch,
+    trigger,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
 
   const formValues = watch();
-  const formProgress = Object.values(formValues).filter(Boolean).length / 5 * 100;
+
+  // Steps configuration
+  const steps = [
+    { 
+      id: 1, 
+      title: "Informations personnelles", 
+      icon: "👤",
+      fields: ["name", "email"]
+    },
+    { 
+      id: 2, 
+      title: "Contact", 
+      icon: "📞",
+      fields: ["phone", "address"]
+    },
+    { 
+      id: 3, 
+      title: "Votre message", 
+      icon: "✉️",
+      fields: ["message"]
+    },
+    { 
+      id: 4, 
+      title: "Confirmation", 
+      icon: "✓",
+      fields: []
+    },
+  ];
+
+  const totalSteps = steps.length;
+  const progressPercentage = (currentStep / totalSteps) * 100;
+
+  // Calculate step completion
+  const isStepComplete = (stepId: number) => {
+    const step = steps.find(s => s.id === stepId);
+    if (!step) return false;
+    
+    return step.fields.every(field => {
+      const value = formValues[field as keyof typeof formValues];
+      return value && value.toString().trim() !== "";
+    });
+  };
+
+  const canProceedToNextStep = () => {
+    return isStepComplete(currentStep);
+  };
+
+  const handleNextStep = async () => {
+    const step = steps.find(s => s.id === currentStep);
+    if (!step) return;
+
+    // Validate current step fields
+    const isValid = await trigger(step.fields as any);
+    
+    if (isValid && currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
   // Fetch contact-page by slug once
   useEffect(() => {
     const fetchContent = async () => {
       try {
+        // Only fetch if BASEURL is configured
+        if (!ADMIN.PAGES || ADMIN.PAGES === 'undefined/pages') {
+          console.warn('API endpoint not configured - using default values');
+          return;
+        }
         const resp = await getRequest(`${ADMIN.PAGES}/6`);
-
-        // *** FIX: The correct data is in `resp.data.content` ***
-        // The API nests the page data inside a `content` property.
         const data = resp?.data?.data as ContactPageApi | undefined;
-        // The a tual content (en, es, shared) is in a *second* `content` object.
         if (data) {
           setPage(data);
         } else {
@@ -111,12 +190,6 @@ const ContactPage = () => {
   const email = shared.email || "";
   const phone = shared.phone || "";
 
-  // Business hours formatting (12h)
-  const bh = shared.businessHours || {};
-  const weekdays = bh.weekdays || {};
-  const saturday = bh.saturday || {};
-  const sundayClosed = bh.sundayClosed !== false;
-
   const handleContactSubmit = async (values: any) => {
     setLoading(true);
     try {
@@ -124,6 +197,7 @@ const ContactPage = () => {
       const response = await postRequest(`${AUTH.CONTACT}`, payload);
       if (response?.status === 201) {
         reset();
+        setCurrentStep(1);
         toast.success("Success! We've received your request");
       }
     } catch (error: any) {
@@ -299,139 +373,352 @@ const ContactPage = () => {
               className="lg:col-span-3"
             >
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
-                {/* Form Progress Bar */}
+                {/* Steps Indicator */}
                 <div className="mb-8">
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-3xl font-bold text-gray-900">Envoyez-nous un message</h2>
-                    <span className="text-sm font-medium text-gray-500">{Math.round(formProgress)}%</span>
+                  <div className="flex items-center justify-between mb-6">
+                    {steps.map((step, index) => (
+                      <div key={step.id} className="flex items-center flex-1">
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex flex-col items-center flex-1"
+                        >
+                          <motion.div
+                            className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-300 ${
+                              currentStep === step.id
+                                ? "bg-gradient-to-br from-we-green to-emerald-500 text-white shadow-lg scale-110"
+                                : currentStep > step.id
+                                ? "bg-we-green text-white"
+                                : "bg-gray-200 text-gray-400"
+                            }`}
+                            whileHover={{ scale: 1.1 }}
+                          >
+                            {currentStep > step.id ? (
+                              <Check className="w-6 h-6" />
+                            ) : (
+                              <span>{step.icon}</span>
+                            )}
+                          </motion.div>
+                          <p className={`text-xs mt-2 text-center font-medium ${
+                            currentStep === step.id ? "text-we-green" : "text-gray-500"
+                          }`}>
+                            {step.title}
+                          </p>
+                        </motion.div>
+                        {index < steps.length - 1 && (
+                          <div className="flex-1 h-1 bg-gray-200 mx-2 rounded-full overflow-hidden">
+                            <motion.div
+                              className="h-full bg-we-green"
+                              initial={{ width: 0 }}
+                              animate={{ width: currentStep > step.id ? "100%" : "0%" }}
+                              transition={{ duration: 0.5 }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-we-green to-emerald-500"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${formProgress}%` }}
-                      transition={{ duration: 0.3 }}
-                    />
+
+                  {/* Progress Bar */}
+                  <div className="relative">
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-we-green to-emerald-500"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progressPercentage}%` }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500 mt-2">
+                      <span>Étape {currentStep} sur {totalSteps}</span>
+                      <span>{Math.round(progressPercentage)}% complété</span>
+                    </div>
                   </div>
                 </div>
 
                 <form onSubmit={handleSubmit(handleContactSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <motion.div
-                      animate={{
-                        scale: focusedField === "name" ? 1.02 : 1,
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <InputGroup
-                        label="Nom complet"
-                        placeholder="Jean Dupont"
-                        inputProps={{
-                          ...register("name"),
-                          onFocus: () => setFocusedField("name"),
-                          onBlur: () => setFocusedField(null),
-                        }}
-                        error={errors.name}
-                      />
-                    </motion.div>
+                  <AnimatePresence mode="wait">
+                    {/* Step 1: Personal Information */}
+                    {currentStep === 1 && (
+                      <motion.div
+                        key="step1"
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                      >
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                          Parlez-nous de vous
+                        </h3>
+                        
+                        <motion.div
+                          animate={{
+                            scale: focusedField === "name" ? 1.02 : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <InputGroup
+                            label="Nom complet"
+                            placeholder="Jean Dupont"
+                            inputProps={{
+                              ...register("name"),
+                              onFocus: () => setFocusedField("name"),
+                              onBlur: () => setFocusedField(null),
+                            }}
+                            error={errors.name}
+                          />
+                        </motion.div>
 
-                    <motion.div
-                      animate={{
-                        scale: focusedField === "email" ? 1.02 : 1,
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <InputGroup
-                        type="email"
-                        label="Email"
-                        placeholder="jean.dupont@example.com"
-                        inputProps={{
-                          ...register("email"),
-                          onFocus: () => setFocusedField("email"),
-                          onBlur: () => setFocusedField(null),
-                        }}
-                        error={errors.email}
-                      />
-                    </motion.div>
+                        <motion.div
+                          animate={{
+                            scale: focusedField === "email" ? 1.02 : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <InputGroup
+                            type="email"
+                            label="Adresse email"
+                            placeholder="jean.dupont@example.com"
+                            inputProps={{
+                              ...register("email"),
+                              onFocus: () => setFocusedField("email"),
+                              onBlur: () => setFocusedField(null),
+                            }}
+                            error={errors.email}
+                          />
+                        </motion.div>
+                      </motion.div>
+                    )}
+
+                    {/* Step 2: Contact Information */}
+                    {currentStep === 2 && (
+                      <motion.div
+                        key="step2"
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                      >
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                          Comment vous joindre ?
+                        </h3>
+                        
+                        <motion.div
+                          animate={{
+                            scale: focusedField === "phone" ? 1.02 : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <InputGroup
+                            type="tel"
+                            label="Téléphone"
+                            placeholder="+33 6 XX XX XX XX"
+                            inputProps={{
+                              ...register("phone"),
+                              onFocus: () => setFocusedField("phone"),
+                              onBlur: () => setFocusedField(null),
+                            }}
+                            error={errors.phone}
+                          />
+                        </motion.div>
+
+                        <motion.div
+                          animate={{
+                            scale: focusedField === "address" ? 1.02 : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <InputGroup
+                            type="text"
+                            label="Adresse (optionnel)"
+                            placeholder="Votre adresse"
+                            inputProps={{
+                              ...register("address"),
+                              onFocus: () => setFocusedField("address"),
+                              onBlur: () => setFocusedField(null),
+                            }}
+                            error={errors.address}
+                          />
+                        </motion.div>
+                      </motion.div>
+                    )}
+
+                    {/* Step 3: Message */}
+                    {currentStep === 3 && (
+                      <motion.div
+                        key="step3"
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                      >
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                          Votre message
+                        </h3>
+                        
+                        <motion.div
+                          animate={{
+                            scale: focusedField === "message" ? 1.02 : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <InputGroup
+                            type="textarea"
+                            label="Décrivez votre projet"
+                            placeholder="Parlez-nous de votre événement..."
+                            inputProps={{
+                              ...register("message"),
+                              onFocus: () => setFocusedField("message"),
+                              onBlur: () => setFocusedField(null),
+                            }}
+                            error={errors.message}
+                            className="bg-white h-48 border border-gray-300 p-3 w-full resize-none rounded-md outline-none focus:border-we-green"
+                          />
+                        </motion.div>
+                      </motion.div>
+                    )}
+
+                    {/* Step 4: Review */}
+                    {currentStep === 4 && (
+                      <motion.div
+                        key="step4"
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                      >
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                          Récapitulatif
+                        </h3>
+                        
+                        <div className="bg-gray-50 rounded-2xl p-6 space-y-4">
+                          <div className="border-b border-gray-200 pb-4">
+                            <p className="text-sm text-gray-500 mb-1">Nom</p>
+                            <p className="text-lg font-semibold text-gray-900">{formValues.name}</p>
+                          </div>
+                          
+                          <div className="border-b border-gray-200 pb-4">
+                            <p className="text-sm text-gray-500 mb-1">Email</p>
+                            <p className="text-lg font-semibold text-gray-900">{formValues.email}</p>
+                          </div>
+                          
+                          <div className="border-b border-gray-200 pb-4">
+                            <p className="text-sm text-gray-500 mb-1">Téléphone</p>
+                            <p className="text-lg font-semibold text-gray-900">{formValues.phone}</p>
+                          </div>
+                          
+                          {formValues.address && (
+                            <div className="border-b border-gray-200 pb-4">
+                              <p className="text-sm text-gray-500 mb-1">Adresse</p>
+                              <p className="text-lg font-semibold text-gray-900">{formValues.address}</p>
+                            </div>
+                          )}
+                          
+                          {formValues.message && (
+                            <div>
+                              <p className="text-sm text-gray-500 mb-1">Message</p>
+                              <p className="text-gray-900">{formValues.message}</p>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Navigation Buttons */}
+                  <div className="flex gap-4 pt-6">
+                    {currentStep > 1 && currentStep < 4 && (
+                      <motion.button
+                        type="button"
+                        onClick={handlePrevStep}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                        Précédent
+                      </motion.button>
+                    )}
+
+                    {currentStep < 3 && (
+                      <motion.button
+                        type="button"
+                        onClick={handleNextStep}
+                        disabled={!canProceedToNextStep()}
+                        whileHover={{ scale: canProceedToNextStep() ? 1.02 : 1 }}
+                        whileTap={{ scale: canProceedToNextStep() ? 0.98 : 1 }}
+                        className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                          canProceedToNextStep()
+                            ? "bg-gradient-to-r from-we-green to-emerald-600 hover:from-emerald-600 hover:to-we-green text-white shadow-lg"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        Suivant
+                        <ArrowRight className="w-5 h-5" />
+                      </motion.button>
+                    )}
+
+                    {currentStep === 3 && (
+                      <motion.button
+                        type="button"
+                        onClick={handleNextStep}
+                        disabled={!canProceedToNextStep()}
+                        whileHover={{ scale: canProceedToNextStep() ? 1.02 : 1 }}
+                        whileTap={{ scale: canProceedToNextStep() ? 0.98 : 1 }}
+                        className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                          canProceedToNextStep()
+                            ? "bg-gradient-to-r from-we-green to-emerald-600 hover:from-emerald-600 hover:to-we-green text-white shadow-lg"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        Voir le récapitulatif
+                        <ArrowRight className="w-5 h-5" />
+                      </motion.button>
+                    )}
+
+                    {currentStep === 4 && (
+                      <>
+                        <motion.button
+                          type="button"
+                          onClick={handlePrevStep}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
+                        >
+                          <ArrowLeft className="w-5 h-5" />
+                          Modifier
+                        </motion.button>
+                        <motion.button
+                          type="submit"
+                          disabled={loading}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="flex-1 py-3 px-6 bg-gradient-to-r from-we-green to-emerald-600 hover:from-emerald-600 hover:to-we-green text-white rounded-xl font-semibold shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+                        >
+                          {loading ? (
+                            <>
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                              />
+                              Envoi en cours...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-5 h-5" />
+                              Envoyer le message
+                            </>
+                          )}
+                        </motion.button>
+                      </>
+                    )}
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <motion.div
-                      animate={{
-                        scale: focusedField === "phone" ? 1.02 : 1,
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <InputGroup
-                        type="tel"
-                        label="Téléphone"
-                        placeholder="+33 6 XX XX XX XX"
-                        inputProps={{
-                          ...register("phone"),
-                          onFocus: () => setFocusedField("phone"),
-                          onBlur: () => setFocusedField(null),
-                        }}
-                        error={errors.phone}
-                      />
-                    </motion.div>
-
-                    <motion.div
-                      animate={{
-                        scale: focusedField === "address" ? 1.02 : 1,
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <InputGroup
-                        type="text"
-                        label="Adresse (optionnel)"
-                        placeholder="Votre adresse"
-                        inputProps={{
-                          ...register("address"),
-                          onFocus: () => setFocusedField("address"),
-                          onBlur: () => setFocusedField(null),
-                        }}
-                        error={errors.address}
-                      />
-                    </motion.div>
-                  </div>
-
-                  <motion.div
-                    animate={{
-                      scale: focusedField === "message" ? 1.02 : 1,
-                    }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <InputGroup
-                      type="textarea"
-                      label="Message"
-                      placeholder="Décrivez-nous votre projet..."
-                      inputProps={{
-                        ...register("message"),
-                        onFocus: () => setFocusedField("message"),
-                        onBlur: () => setFocusedField(null),
-                      }}
-                      error={errors.message}
-                      className="bg-white h-40 border border-gray-300 p-3 w-full resize-none rounded-md outline-none focus:border-we-green"
-                    />
-                  </motion.div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      loading={loading}
-                      type="submit"
-                      variant="primary"
-                      size="large"
-                      className="w-full relative overflow-hidden group bg-gradient-to-r from-we-green to-emerald-600 hover:from-emerald-600 hover:to-we-green"
-                    >
-                      <span className="relative z-10 flex items-center justify-center gap-2">
-                        <Send className="w-5 h-5" />
-                        Envoyer le message
-                      </span>
-                    </Button>
-                  </motion.div>
                 </form>
               </div>
             </motion.div>

@@ -1,4 +1,4 @@
-import { GoogleMap, LoadScriptNext, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScriptNext, MarkerF } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
@@ -18,17 +18,32 @@ export default function OfficeMap() {
     window.open(googleMapsUrl, "_blank");
   };
 
+  // Don't render map if API key is not configured
+  const apiKey = import.meta.env.VITE_PLACE_API;
+  
+  if (!apiKey || apiKey === 'YOUR_GOOGLE_PLACES_API_KEY_HERE') {
+    return (
+      <div className="w-full h-[450px] rounded-3xl bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-2">📍 Carte Google Maps</p>
+          <p className="text-sm text-gray-400">Configuration de l'API en cours...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_PLACE_API}>
+    <LoadScriptNext googleMapsApiKey={apiKey}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={15} // controlled zoom, no auto zoom-in
         options={{
           disableDefaultUI: true,
+          mapId: "we-event-map", // Required for Advanced Markers
         }}
       >
-        <Marker position={center} onClick={handleMarkerClick} />
+        <MarkerF position={center} onClick={handleMarkerClick} />
       </GoogleMap>
     </LoadScriptNext>
   );
