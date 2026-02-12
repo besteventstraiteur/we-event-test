@@ -227,17 +227,6 @@ const PartnersList = () => {
     }
   };
 
-        setCategories(opts);
-      } else {
-        setCategories([]);
-      }
-    } catch (e) {
-      setCategories([]);
-    } finally {
-      setLoadingCats(false);
-    }
-  };
-
   useEffect(() => {
     const {
       page,
