@@ -83,10 +83,11 @@ export const fakePartnerDetails: Record<string, any> = {
     completedEvents: 456,
     portfolioImages: [
       "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&h=800&q=80&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&h=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=1200&q=80&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=800&q=80&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200&h=800&q=80&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=1200&h=800&q=80&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=1200&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=1200&h=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&h=1200&q=80&auto=format&fit=crop"
     ],
     socialLinks: {
       facebook: "https://facebook.com/traiteurexcellence",

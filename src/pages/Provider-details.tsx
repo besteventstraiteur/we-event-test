@@ -589,13 +589,18 @@ const Providerdetails = () => {
                                 {/* Wrap image with <a> for Fancybox */}
                                 <a
                                   href={src}
-                                  data-fancybox="portfolio" // group all images together
-                                  // data-caption={`Portfolio ${idx + 1}`}
+                                  data-fancybox="portfolio"
                                 >
                                   <img
-                                    src={thumbnails[idx] || src} // use thumbnail if ready
+                                    src={thumbnails[idx] || src}
                                     alt={`portfolio-${idx + 1}`}
-                                    className="w-full h-full object-cover cursor-pointer"
+                                    className="w-full h-full cursor-pointer"
+                                    onLoad={(e) => {
+                                      const img = e.target as HTMLImageElement;
+                                      const orientation = img.naturalWidth > img.naturalHeight ? 'landscape' : 'portrait';
+                                      img.setAttribute('data-orientation', orientation);
+                                      img.style.objectFit = orientation === 'landscape' ? 'cover' : 'contain';
+                                    }}
                                   />
                                 </a>
                               </div>
