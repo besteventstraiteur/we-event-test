@@ -213,7 +213,7 @@ const ContactPage = () => {
               <span className="text-sm font-semibold text-gray-700">Parlons de votre projet</span>
             </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-we-green to-emerald-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-gray-900">
               Contactez-nous
             </h1>
             
@@ -543,7 +543,7 @@ const ContactPage = () => {
               <span className="text-sm font-medium text-we-green">FAQ</span>
             </motion.div>
             
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
               Questions fréquentes
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -575,7 +575,7 @@ const ContactPage = () => {
               <span className="text-sm font-medium text-we-green">Localisation</span>
             </motion.div>
             
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
               Venez nous rencontrer
             </h2>
             <p className="text-gray-600 text-lg">
