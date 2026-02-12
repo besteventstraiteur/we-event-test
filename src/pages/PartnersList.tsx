@@ -297,6 +297,15 @@ const PartnersList = () => {
     fetchCategories();
   }, []);
 
+  // Auto-search when searchName changes (with debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProfiles(false);
+    }, 300); // 300ms debounce to avoid too many requests
+
+    return () => clearTimeout(timer);
+  }, [searchName]);
+
   const selectedFilters = [
     locationText && { type: "location", label: locationText },
     selectedCategory && { type: "services", label: selectedCategory.label },
@@ -376,12 +385,7 @@ const PartnersList = () => {
                     onChange={(e) => {
                       setSearchName(e.target.value);
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        fetchProfiles();
-                      }
-                    }}
-                    className="w-full pl-10 pr-4 py-3 text-sm outline-none placeholder:text-gray-400 border border-gray-300 rounded-lg focus:border-we-green focus:ring-2 focus:ring-we-green/20 transition-all"
+                    className="w-full pl-10 pr-4 py-3 text-sm outline-none placeholder:text-gray-400 border border-gray-300 rounded-lg focus:border-[#093B56] focus:ring-2 focus:ring-[#093B56]/20 transition-all"
                     placeholder="Nom de l'entreprise..."
                   />
                   {searchName && (
@@ -396,14 +400,7 @@ const PartnersList = () => {
                     </button>
                   )}
                 </div>
-                {searchName && (
-                  <button
-                    onClick={() => fetchProfiles()}
-                    className="mt-2 w-full py-2 bg-we-green text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
-                  >
-                    Rechercher
-                  </button>
-                )}
+
               </div>
               
               <div>
@@ -646,7 +643,7 @@ const PartnersList = () => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           
                           {/* Arrow Button */}
-                          <div className="absolute bottom-4 right-4 w-12 h-12 bg-we-green group-hover:bg-green-600 rounded-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-xl">
+                          <div className="absolute bottom-4 right-4 w-12 h-12 bg-[#093B56] group-hover:bg-[#0a4a6b] rounded-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-xl">
                             <ArrowRight
                               size={22}
                               className="text-white"
@@ -661,7 +658,7 @@ const PartnersList = () => {
                             {p.services?.slice(0, 2).map((item, idx) => (
                               <span
                                 key={idx}
-                                className="text-xs font-medium text-we-green bg-green-50 px-3 py-1 rounded-full border border-green-100"
+                                className="text-xs font-medium text-[#093B56] bg-blue-50 px-3 py-1 rounded-full border border-blue-100"
                               >
                                 {item}
                               </span>
@@ -710,7 +707,7 @@ const PartnersList = () => {
                           {/* Response Time Badge */}
                           {p.responseTime && (
                             <div className="flex items-center gap-2 text-xs">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                              <div className="w-2 h-2 bg-[#093B56] rounded-full animate-pulse" />
                               <span className="text-gray-600">Répond en {p.responseTime}</span>
                             </div>
                           )}
