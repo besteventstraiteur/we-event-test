@@ -360,7 +360,27 @@ const ProviderDetailsV2 = () => {
               </motion.section>
             )}
 
-            {/* Services Section */}
+            {/* About Section - DEUXIÈME */}
+            {profile?.description && (
+              <motion.section
+                className="section-card"
+                initial={{ y: 40, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="section-header">
+                  <MessageCircle size={24} />
+                  <h2>À propos</h2>
+                </div>
+                <div
+                  className="description-content"
+                  dangerouslySetInnerHTML={{ __html: profile.description }}
+                />
+              </motion.section>
+            )}
+
+            {/* Services Section - TROISIÈME */}
             {getServices.length > 0 && (
               <motion.section
                 className="section-card"
@@ -388,26 +408,6 @@ const ProviderDetailsV2 = () => {
                     </motion.div>
                   ))}
                 </div>
-              </motion.section>
-            )}
-
-            {/* About Section */}
-            {profile?.description && (
-              <motion.section
-                className="section-card"
-                initial={{ y: 40, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="section-header">
-                  <MessageCircle size={24} />
-                  <h2>À propos</h2>
-                </div>
-                <div
-                  className="description-content"
-                  dangerouslySetInnerHTML={{ __html: profile.description }}
-                />
               </motion.section>
             )}
 
