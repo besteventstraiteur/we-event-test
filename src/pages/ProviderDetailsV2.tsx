@@ -323,6 +323,43 @@ const ProviderDetailsV2 = () => {
         <div className="content-grid">
           {/* Left Column - Main Content */}
           <div className="main-content">
+            {/* Portfolio Gallery - EN PREMIER */}
+            {portfolioImages.length > 0 && (
+              <motion.section
+                className="section-card"
+                initial={{ y: 40, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="section-header">
+                  <Award size={24} />
+                  <h2>Portfolio</h2>
+                  <span className="count-badge">{portfolioImages.length} photos</span>
+                </div>
+                <div className="portfolio-grid">
+                  {portfolioImages.map((img, idx) => (
+                    <motion.a
+                      key={idx}
+                      href={img}
+                      data-fancybox="portfolio"
+                      className="portfolio-item"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.05, duration: 0.4 }}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <img src={img} alt={`Portfolio ${idx + 1}`} />
+                      <div className="portfolio-overlay">
+                        <span>Voir</span>
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+
             {/* Services Section */}
             {getServices.length > 0 && (
               <motion.section
@@ -374,43 +411,6 @@ const ProviderDetailsV2 = () => {
               </motion.section>
             )}
 
-            {/* Portfolio Gallery */}
-            {portfolioImages.length > 0 && (
-              <motion.section
-                className="section-card"
-                initial={{ y: 40, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="section-header">
-                  <Award size={24} />
-                  <h2>Portfolio</h2>
-                  <span className="count-badge">{portfolioImages.length} photos</span>
-                </div>
-                <div className="portfolio-grid">
-                  {portfolioImages.map((img, idx) => (
-                    <motion.a
-                      key={idx}
-                      href={img}
-                      data-fancybox="portfolio"
-                      className="portfolio-item"
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.05, duration: 0.4 }}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <img src={img} alt={`Portfolio ${idx + 1}`} />
-                      <div className="portfolio-overlay">
-                        <span>Voir</span>
-                      </div>
-                    </motion.a>
-                  ))}
-                </div>
-              </motion.section>
-            )}
-
             {/* Videos Section */}
             {profile?.BusinessVideo && profile.BusinessVideo.length > 0 && (
               <motion.section
@@ -444,99 +444,6 @@ const ProviderDetailsV2 = () => {
                           allowFullScreen
                         ></iframe>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.section>
-            )}
-
-            {/* Documents Section */}
-            {profile?.BusinessDocument && profile.BusinessDocument.length > 0 && (
-              <motion.section
-                className="section-card"
-                initial={{ y: 40, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="section-header">
-                  <FileText size={24} />
-                  <h2>Documents</h2>
-                  <span className="count-badge">{profile.BusinessDocument.length}</span>
-                </div>
-                <div className="documents-list">
-                  {profile.BusinessDocument.map((doc, idx) => (
-                    <motion.a
-                      key={idx}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="document-item"
-                      initial={{ x: -20, opacity: 0 }}
-                      whileInView={{ x: 0, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.05, duration: 0.4 }}
-                    >
-                      <div className="document-icon">
-                        <FileText size={24} />
-                      </div>
-                      <div className="document-info">
-                        <div className="document-name">{doc.name}</div>
-                        <div className="document-type">{doc.type.toUpperCase()}</div>
-                      </div>
-                      <Download size={20} className="download-icon" />
-                    </motion.a>
-                  ))}
-                </div>
-              </motion.section>
-            )}
-
-            {/* Reviews Section */}
-            {profile?.BusinessReview && profile.BusinessReview.length > 0 && (
-              <motion.section
-                className="section-card"
-                initial={{ y: 40, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="section-header">
-                  <Star size={24} />
-                  <h2>Avis clients</h2>
-                </div>
-                <div className="reviews-list">
-                  {profile.BusinessReview.slice(0, 5).map((review, idx) => (
-                    <motion.div
-                      key={idx}
-                      className="review-card"
-                      initial={{ x: -20, opacity: 0 }}
-                      whileInView={{ x: 0, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1, duration: 0.4 }}
-                    >
-                      <div className="review-header">
-                        <div className="review-author">
-                          <div className="author-avatar">
-                            {review.userName?.[0] || "U"}
-                          </div>
-                          <div>
-                            <div className="author-name">{review.userName}</div>
-                            <div className="review-date">
-                              {new Date(review.createdAt).toLocaleDateString("fr-FR")}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="review-rating">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={14}
-                              fill={i < review.rating ? "currentColor" : "none"}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="review-text">{review.review}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -632,6 +539,73 @@ const ProviderDetailsV2 = () => {
                 <Mail size={18} />
                 Demander un devis
               </Button>
+
+              {/* Documents Section - DANS SIDEBAR */}
+              {profile?.BusinessDocument && profile.BusinessDocument.length > 0 && (
+                <div className="sidebar-section">
+                  <div className="section-header-sidebar">
+                    <FileText size={20} />
+                    <h3>Documents</h3>
+                  </div>
+                  <div className="documents-list-sidebar">
+                    {profile.BusinessDocument.map((doc, idx) => (
+                      <a
+                        key={idx}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="document-item-sidebar"
+                      >
+                        <div className="document-icon-sidebar">
+                          <FileText size={18} />
+                        </div>
+                        <div className="document-info-sidebar">
+                          <div className="document-name-sidebar">{doc.name}</div>
+                          <div className="document-type-sidebar">{doc.type.toUpperCase()}</div>
+                        </div>
+                        <Download size={16} className="download-icon-sidebar" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Reviews Section - DANS SIDEBAR */}
+              {profile?.BusinessReview && profile.BusinessReview.length > 0 && (
+                <div className="sidebar-section">
+                  <div className="section-header-sidebar">
+                    <Star size={20} />
+                    <h3>Avis clients</h3>
+                  </div>
+                  <div className="reviews-list-sidebar">
+                    {profile.BusinessReview.slice(0, 3).map((review, idx) => (
+                      <div key={idx} className="review-card-sidebar">
+                        <div className="review-header-sidebar">
+                          <div className="author-avatar-sidebar">
+                            {review.userName?.[0] || "U"}
+                          </div>
+                          <div className="review-author-info">
+                            <div className="author-name-sidebar">{review.userName}</div>
+                            <div className="review-rating-sidebar">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  size={12}
+                                  fill={i < review.rating ? "currentColor" : "none"}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <p className="review-text-sidebar">{review.review}</p>
+                        <div className="review-date-sidebar">
+                          {new Date(review.createdAt).toLocaleDateString("fr-FR")}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
           </aside>
         </div>
