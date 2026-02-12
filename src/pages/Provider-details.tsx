@@ -595,7 +595,7 @@ const Providerdetails = () => {
                                   <img
                                     src={thumbnails[idx] || src} // use thumbnail if ready
                                     alt={`portfolio-${idx + 1}`}
-                                    className="w-full h-full object-contain cursor-pointer"
+                                    className="w-full h-full object-cover cursor-pointer"
                                   />
                                 </a>
                               </div>
@@ -632,12 +632,13 @@ const Providerdetails = () => {
                         </h3>
 
                         <Swiper
+                          className="video-slider"
                           slidesPerView={1}
-                          spaceBetween={10}
+                          spaceBetween={0}
                           loop={true}
                           pagination={false}
                           navigation={true}
-                          speed={900}
+                          speed={600}
                           modules={[Pagination, Navigation, Autoplay]}
                           onSlideChange={() => {
                             // Pause MP4 videos
@@ -661,11 +662,10 @@ const Providerdetails = () => {
 
                             return (
                               <SwiperSlide key={vid.id}>
-                                <div className="rounded-2xl overflow-hidden relative w-full h-[60vh] sm:h-[70vh] max-h-[80vh] mx-auto bg-gray-100">
+                                <div className="video-container">
                                   {/* YOUTUBE */}
                                   {isYouTube ? (
                                     <iframe
-                                      className="absolute top-0 left-0 w-full h-full object-contain"
                                       src={embedUrl}
                                       title={vid.name || "YouTube video"}
                                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -673,10 +673,7 @@ const Providerdetails = () => {
                                     />
                                   ) : (
                                     /* MP4 VIDEO */
-                                    <video
-                                      controls
-                                      className="absolute top-0 left-0 w-full h-full object-contain"
-                                    >
+                                    <video controls>
                                       <source src={vid.url} type="video/mp4" />
                                     </video>
                                   )}
