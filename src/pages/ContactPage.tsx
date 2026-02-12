@@ -1,4 +1,4 @@
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Send, Sparkles, MessageCircle, Calendar, CheckCircle2 } from "lucide-react";
 import Accordion from "../components/contact/Faq";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,7 +9,7 @@ import { ADMIN, AUTH } from "../utils/endPoints";
 import { getRequest, postRequest } from "../utils/http-client/axiosClient";
 import { useToast } from "../utils/toast";
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import OfficeMap from "../module/Contact/Map";
 
 // ---------------- Types ----------------
@@ -63,6 +63,11 @@ const ContactPage = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState<ContactPageApi | null>(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  const { scrollYProgress } = useScroll();
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
   // Enquiry form
   const {
@@ -70,10 +75,14 @@ const ContactPage = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  const formValues = watch();
+  const formProgress = Object.values(formValues).filter(Boolean).length / 5 * 100;
 
   // Fetch contact-page by slug once
   useEffect(() => {
@@ -115,7 +124,7 @@ const ContactPage = () => {
       const response = await postRequest(`${AUTH.CONTACT}`, payload);
       if (response?.status === 201) {
         reset();
-        toast.success("Success! We’ve received your request");
+        toast.success("Success! We've received your request");
       }
     } catch (error: any) {
       console.error(error);
@@ -125,226 +134,467 @@ const ContactPage = () => {
     }
   };
 
+  const contactMethods = [
+    {
+      icon: Mail,
+      title: "Email",
+      value: "contact@we-event.eu",
+      link: "mailto:contact@we-event.eu",
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "bg-blue-50",
+    },
+    {
+      icon: Phone,
+      title: "Téléphone",
+      value: "+33 4 XX XX XX XX",
+      link: "tel:+33400000000",
+      color: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-50",
+    },
+    {
+      icon: MapPin,
+      title: "Adresse",
+      value: "93 Avenue du Général de Gaulle, 83300 Draguignan",
+      link: "#map",
+      color: "from-purple-500 to-pink-500",
+      bgColor: "bg-purple-50",
+    },
+  ];
+
   return (
-    <div data-no-translate>
-      <div className="pt-32 pb-12 md:pb-24 md:pt-36">
-        <div className="container">
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            viewport={{ once: false, amount: 0.3 }}
-            className="text-size-4xl text-center font-semibold"
-          >
-            Contactez-nous
-          </motion.h1>
+    <div data-no-translate className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
+      {/* Hero Section with Parallax */}
+      <motion.div 
+        style={{ opacity, scale }}
+        className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden"
+      >
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="absolute -top-1/2 -right-1/4 w-96 h-96 bg-gradient-to-br from-we-green/20 to-blue-500/20 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1.2, 1, 1.2],
+              rotate: [90, 0, 90],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="absolute -bottom-1/2 -left-1/4 w-96 h-96 bg-gradient-to-tr from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"
+          />
         </div>
 
-        <section className="pt-9 section-padding-y">
-          <div className="container-1180">
-            <div className="flex gap-8 flex-wrap lg:flex-nowrap">
-              {/* Left: Enquiry form */}
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                viewport={{ once: false, amount: 0.3 }}
-                className="w-full lg:w-2/3"
-              >
-                <form
-                  onSubmit={handleSubmit(handleContactSubmit)}
-                  className="contact-wrapper bg-white rounded-2xl p-9 space-y-5 shadow-sm"
-                >
-                  <h2 className="text-3xl font-semibold mb-2">
-                    Demande de renseignements
-                  </h2>
-                  <p className="text-gray-600">
-                    Notre équipe est à votre disposition pour vous accompagner
-                    dans l’organisation de votre événement.
-                  </p>
+        <div className="container relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg mb-6"
+            >
+              <Sparkles className="w-5 h-5 text-we-green" />
+              <span className="text-sm font-semibold text-gray-700">Parlons de votre projet</span>
+            </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="w-full">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-we-green to-emerald-600 bg-clip-text text-transparent">
+              Contactez-nous
+            </h1>
+            
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              Notre équipe passionnée est prête à transformer votre événement en<br />
+              <span className="font-semibold text-we-green">une expérience inoubliable</span>
+            </p>
+
+            {/* Quick Stats */}
+            <div className="flex flex-wrap justify-center gap-8 mt-12">
+              {[
+                { icon: MessageCircle, label: "Réponse", value: "< 24h" },
+                { icon: Calendar, label: "Disponibilité", value: "7j/7" },
+                { icon: CheckCircle2, label: "Satisfaction", value: "98%" },
+              ].map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  className="flex items-center gap-3 px-6 py-3 bg-white/60 backdrop-blur-sm rounded-2xl shadow-md"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-we-green to-emerald-500 rounded-lg flex items-center justify-center">
+                    <stat.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm text-gray-500">{stat.label}</p>
+                    <p className="text-lg font-bold text-gray-900">{stat.value}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Contact Methods Cards */}
+      <section className="py-12 -mt-8">
+        <div className="container-1180">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {contactMethods.map((method, index) => (
+              <motion.a
+                key={index}
+                href={method.link}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                className="group relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-100 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500" />
+                
+                <div className={`w-14 h-14 bg-gradient-to-br ${method.color} rounded-xl flex items-center justify-center mb-4 transform group-hover:rotate-6 group-hover:scale-110 transition-all duration-300`}>
+                  <method.icon className="w-7 h-7 text-white" />
+                </div>
+                
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{method.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{method.value}</p>
+                
+                <motion.div
+                  className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-we-green to-emerald-500"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content Section */}
+      <section className="py-16">
+        <div className="container-1180">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            {/* Form - Takes 3 columns */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-3"
+            >
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
+                {/* Form Progress Bar */}
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-3xl font-bold text-gray-900">Envoyez-nous un message</h2>
+                    <span className="text-sm font-medium text-gray-500">{Math.round(formProgress)}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-we-green to-emerald-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${formProgress}%` }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                </div>
+
+                <form onSubmit={handleSubmit(handleContactSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <motion.div
+                      animate={{
+                        scale: focusedField === "name" ? 1.02 : 1,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <InputGroup
-                        label={`Nom`}
-                        placeholder={`Saisissez votre nom`}
-                        inputProps={register("name")}
+                        label="Nom complet"
+                        placeholder="Jean Dupont"
+                        inputProps={{
+                          ...register("name"),
+                          onFocus: () => setFocusedField("name"),
+                          onBlur: () => setFocusedField(null),
+                        }}
                         error={errors.name}
                       />
-                    </div>
-                    <div className="w-full">
+                    </motion.div>
+
+                    <motion.div
+                      animate={{
+                        scale: focusedField === "email" ? 1.02 : 1,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <InputGroup
                         type="email"
-                        label={`Email`}
-                        inputProps={register("email")}
+                        label="Email"
+                        placeholder="jean.dupont@example.com"
+                        inputProps={{
+                          ...register("email"),
+                          onFocus: () => setFocusedField("email"),
+                          onBlur: () => setFocusedField(null),
+                        }}
                         error={errors.email}
-                        placeholder={`Saisissez votre email`}
                       />
-                    </div>
+                    </motion.div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <motion.div
+                      animate={{
+                        scale: focusedField === "phone" ? 1.02 : 1,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <InputGroup
                         type="tel"
-                        label={`Numéro de téléphone`}
-                        placeholder={`Saisissez votre numéro de téléphone`}
-                        inputProps={register("phone")}
+                        label="Téléphone"
+                        placeholder="+33 6 XX XX XX XX"
+                        inputProps={{
+                          ...register("phone"),
+                          onFocus: () => setFocusedField("phone"),
+                          onBlur: () => setFocusedField(null),
+                        }}
                         error={errors.phone}
                       />
-                    </div>
-                    <div className="w-full">
+                    </motion.div>
+
+                    <motion.div
+                      animate={{
+                        scale: focusedField === "address" ? 1.02 : 1,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <InputGroup
                         type="text"
-                        label={`Adresse`}
-                        placeholder={`Saisissez votre adresse`}
-                        inputProps={register("address")}
+                        label="Adresse (optionnel)"
+                        placeholder="Votre adresse"
+                        inputProps={{
+                          ...register("address"),
+                          onFocus: () => setFocusedField("address"),
+                          onBlur: () => setFocusedField(null),
+                        }}
                         error={errors.address}
                       />
-                    </div>
+                    </motion.div>
                   </div>
-                  <div className="w-full">
+
+                  <motion.div
+                    animate={{
+                      scale: focusedField === "message" ? 1.02 : 1,
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
                     <InputGroup
                       type="textarea"
-                      label={`Message`}
-                      placeholder={`Message`}
-                      inputProps={register("message")}
+                      label="Message"
+                      placeholder="Décrivez-nous votre projet..."
+                      inputProps={{
+                        ...register("message"),
+                        onFocus: () => setFocusedField("message"),
+                        onBlur: () => setFocusedField(null),
+                      }}
                       error={errors.message}
                       className="bg-white h-40 border border-gray-300 p-3 w-full resize-none rounded-md outline-none focus:border-we-green"
                     />
-                  </div>
-                  <div className="text-center">
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
                     <Button
                       loading={loading}
                       type="submit"
                       variant="primary"
                       size="large"
+                      className="w-full relative overflow-hidden group bg-gradient-to-r from-we-green to-emerald-600 hover:from-emerald-600 hover:to-we-green"
                     >
-                      Envoyer
-                    </Button>
-                  </div>
-                </form>
-              </motion.div>
-
-              <div className="w-full lg:w-1/3 space-y-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  viewport={{ once: false, amount: 0.3 }}
-                  className="bg-white p-6 rounded-2xl shadow-sm"
-                >
-                  <h4 className="text-2xl font-semibold mb-4">
-                    Contactez-nous
-                  </h4>
-                  <div className="space-y-4">
-                    {email && (
-                      <a
-                        href={`mailto:${email}`}
-                        className="flex items-start gap-2 hover:text-tertiary"
-                      >
-                        <Mail size={18} className="flex-shrink-0" />
-                        <span className="text-base leading-4">{email}</span>
-                      </a>
-                    )}
-
-                    {email && (
-                      <a
-                        href="mailto:jeff@we-event.eu"
-                        className="flex items-start gap-2 hover:text-tertiary"
-                      >
-                        <Mail size={18} className="flex-shrink-0" />
-                        <span className="text-base leading-4">
-                          jeff@we-event.eu
-                        </span>
-                      </a>
-                    )}
-
-                    {/* {phone && (
-                      <a href={`tel:${phone}`} className="flex gap-2 group">
-                        <PhoneCall className="text-we-green" />
-                        <span className="font-inter transition-all duration-300 group-hover:text-we-green">
-                          {phone}
-                        </span>
-                      </a>
-                    )} */}
-
-                    {/* {address && (
-                      <div className="flex gap-2">
-                        <MapPin size={20} className="flex-shrink-0" />
-                        <span>{address}</span>
-                      </div>
-                    )} */}
-                    <div className="flex items-start gap-2">
-                      <MapPin size={20} className="flex-shrink-0" />
-                      <span className="text-base leading-4">
-                        93 Avenue du Général de Gaulle 83300 Draguignan
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        <Send className="w-5 h-5" />
+                        Envoyer le message
                       </span>
+                    </Button>
+                  </motion.div>
+                </form>
+              </div>
+            </motion.div>
+
+            {/* Info Sidebar - Takes 2 columns */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-2 space-y-6"
+            >
+              {/* Opening Hours Card */}
+              <div className="bg-gradient-to-br from-we-green to-emerald-600 rounded-3xl p-8 shadow-xl text-white">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <Clock className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-bold">Horaires</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  {[
+                    { day: "Lundi - Vendredi", hours: "9h00 - 18h00", open: true },
+                    { day: "Samedi", hours: "10h00 - 16h00", open: true },
+                    { day: "Dimanche", hours: "Fermé", open: false },
+                  ].map((schedule, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex justify-between items-center py-3 border-b border-white/20 last:border-0"
+                    >
+                      <span className="font-medium">{schedule.day}</span>
+                      <span className={`font-bold ${schedule.open ? 'text-white' : 'text-white/60'}`}>
+                        {schedule.hours}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Info Card */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Informations rapides</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Email principal</p>
+                      <a href="mailto:contact@we-event.eu" className="text-gray-900 font-medium hover:text-we-green transition-colors">
+                        contact@we-event.eu
+                      </a>
                     </div>
                   </div>
-                </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  viewport={{ once: false, amount: 0.3 }}
-                  className="bg-white p-6 rounded-2xl shadow-sm"
-                >
-                  <h4 className="text-2xl font-semibold mb-4">
-                    Horaires d’ouverture
-                  </h4>
-                  <div className="space-y-2">
-                    <p>Lundi – Vendredi : 9h00 – 18h00</p>
-                    <p>Samedi : 10h00 – 16h00</p>
-                    <p>Dimanche : fermé</p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Email commercial</p>
+                      <a href="mailto:jeff@we-event.eu" className="text-gray-900 font-medium hover:text-we-green transition-colors">
+                        jeff@we-event.eu
+                      </a>
+                    </div>
                   </div>
-                </motion.div>
-                <div></div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Adresse</p>
+                      <p className="text-gray-900 font-medium">
+                        93 Avenue du Général de Gaulle<br />
+                        83300 Draguignan, France
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* FAQs by language */}
+      {/* FAQ Section */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+        <div className="container-1180">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-we-green/10 rounded-full mb-4"
+            >
+              <MessageCircle className="w-5 h-5 text-we-green" />
+              <span className="text-sm font-medium text-we-green">FAQ</span>
+            </motion.div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Questions fréquentes
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Trouvez rapidement les réponses à vos questions
+            </p>
+          </motion.div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.3 }}
-          className="section-padding-y pt-0"
-        >
-          <div className="container-1180">
-            <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-10">
-                Faqs
-              </h2>
-            </div>
-            <Accordion />
-          </div>
-        </motion.section>
+          <Accordion />
+        </div>
+      </section>
 
-        {/* Map section */}
+      {/* Map Section */}
+      <section className="py-20">
+        <div className="container-1180">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-we-green/10 rounded-full mb-4"
+            >
+              <MapPin className="w-5 h-5 text-we-green" />
+              <span className="text-sm font-medium text-we-green">Localisation</span>
+            </motion.div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Venez nous rencontrer
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Notre bureau à Draguignan
+            </p>
+          </motion.div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.3 }}
-        >
-          <div className="container-1180">
-            <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-10">
-                Notre Bureau sur la Carte
-              </h2>
-              <div className="rounded-3xl overflow-hidden">
-                <OfficeMap />
-              </div>
-            </div>
-          </div>
-        </motion.section>
-      </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white"
+            id="map"
+          >
+            <OfficeMap />
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 };
