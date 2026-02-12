@@ -40,6 +40,7 @@ import { useToast } from "../utils/toast";
 import { RESPONSE_CODE } from "../utils/constants";
 import MyFavorite from "../components/ui/MyFavorite";
 import { useRef } from "react";
+import { fakePartnerDetails } from "../data/fakePartnerDetails";
 
 type ServiceItem = {
   businessId: string;
@@ -226,8 +227,35 @@ const Providerdetails = () => {
       const data: BusinessProfile | undefined = res?.data?.data;
       setProfile(data ?? null);
     } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message || "Failed to load profile.");
-      setProfile(null);
+      console.debug('API not available, using fake partner data');
+      // Use fake data as fallback
+      if (id && fakePartnerDetails[id]) {
+        const fakeData = fakePartnerDetails[id];
+        setProfile({
+          id: fakeData.id,
+          businessName: fakeData.businessName,
+          businessDescription: fakeData.businessDescription,
+          email: fakeData.email,
+          phone: fakeData.phone,
+          address: fakeData.address,
+          city: fakeData.city,
+          postalCode: fakeData.postalCode,
+          country: fakeData.country,
+          website: fakeData.website,
+          isVerified: fakeData.isVerified,
+          completedEvents: fakeData.completedEvents,
+          portfolioImages: fakeData.portfolioImages,
+          socialLinks: fakeData.socialLinks,
+          services: fakeData.services,
+          averageRating: fakeData.rating.averageRating,
+          totalReviews: fakeData.rating.totalCount,
+        } as any);
+        setRatings(fakeData.reviews || []);
+        setErrorMsg(null);
+      } else {
+        setErrorMsg(err?.response?.data?.message || "Failed to load profile.");
+        setProfile(null);
+      }
     } finally {
       setLoading(false);
     }
