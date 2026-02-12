@@ -18,4 +18,29 @@ export default defineConfig({
       protocol: 'wss',
     },
   },
+  build: {
+    // Chunk size optimization
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split vendor chunks for better caching
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['framer-motion', 'lucide-react'],
+          'google-vendor': ['@react-google-maps/api'],
+        },
+      },
+    },
+  },
+  optimizeDeps: {
+    // Pre-bundle dependencies for faster cold starts
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'framer-motion',
+      'lucide-react',
+      '@react-google-maps/api',
+    ],
+  },
 });

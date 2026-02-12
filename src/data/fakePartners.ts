@@ -8,8 +8,8 @@ export const fakePartners = [
     services: ["Fleuriste", "Bouquets de mariée"],
     rating: { averageRating: 4.9, totalReviews: 127 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80",
-      "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80"
+      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -24,8 +24,8 @@ export const fakePartners = [
     services: ["Traiteur, Restauration & Boissons", "Menu personnalisé"],
     rating: { averageRating: 4.8, totalReviews: 189 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80",
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80"
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: true,
     verified: true,
@@ -40,8 +40,8 @@ export const fakePartners = [
     services: ["Photographe", "Vidéaste"],
     rating: { averageRating: 5.0, totalReviews: 98 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80",
-      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80"
+      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -56,8 +56,8 @@ export const fakePartners = [
     services: ["DJ & Musiciens", "Animation musicale"],
     rating: { averageRating: 4.7, totalReviews: 156 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80",
-      "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=800&q=80"
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: true,
     verified: true,
@@ -72,8 +72,8 @@ export const fakePartners = [
     services: ["Lieu de réception", "Domaine prestigieux"],
     rating: { averageRating: 4.9, totalReviews: 203 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1519167758481-83f29da8b86c?w=800&q=80",
-      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80"
+      "https://images.unsplash.com/photo-1519167758481-83f29da8b86c?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -88,8 +88,8 @@ export const fakePartners = [
     services: ["Animations & Divertissement", "Animation enfants"],
     rating: { averageRating: 4.6, totalReviews: 142 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
-      "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80"
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -104,8 +104,8 @@ export const fakePartners = [
     services: ["Papeterie & Cadeaux", "Wedding cake"],
     rating: { averageRating: 4.9, totalReviews: 174 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&q=80",
-      "https://images.unsplash.com/photo-1562440499-64c9a5a7d5c4?w=800&q=80"
+      "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1562440499-64c9a5a7d5c4?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: true,
     verified: true,
@@ -120,8 +120,8 @@ export const fakePartners = [
     services: ["Décorateurs", "Design d'intérieur"],
     rating: { averageRating: 4.8, totalReviews: 132 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
-      "https://images.unsplash.com/photo-1519167758481-83f29da8b86c?w=800&q=80"
+      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1519167758481-83f29da8b86c?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -136,8 +136,8 @@ export const fakePartners = [
     services: ["DJ & Musiciens", "Orchestre live"],
     rating: { averageRating: 4.7, totalReviews: 91 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80",
-      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80"
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -152,8 +152,8 @@ export const fakePartners = [
     services: ["Location de matériel & de mobilier", "Sonorisation"],
     rating: { averageRating: 4.6, totalReviews: 118 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=800&q=80",
-      "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80"
+      "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: true,
     verified: true,
@@ -168,8 +168,8 @@ export const fakePartners = [
     services: ["Mode, Bijoux & Beauté", "Robes de mariée"],
     rating: { averageRating: 4.9, totalReviews: 215 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800&q=80",
-      "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=800&q=80"
+      "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -184,8 +184,8 @@ export const fakePartners = [
     services: ["Transport", "Voiture de prestige"],
     rating: { averageRating: 4.8, totalReviews: 143 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80",
-      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80"
+      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -200,8 +200,8 @@ export const fakePartners = [
     services: ["Voyage de noces & Séjours", "Organisation voyage"],
     rating: { averageRating: 4.7, totalReviews: 156 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80",
-      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80"
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
@@ -216,8 +216,8 @@ export const fakePartners = [
     services: ["Organisation & Officiants", "Wedding planner"],
     rating: { averageRating: 4.9, totalReviews: 198 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80",
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80"
+      "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: true,
     verified: true,
@@ -232,8 +232,8 @@ export const fakePartners = [
     services: ["Divers / Imprévus", "Services complémentaires"],
     rating: { averageRating: 4.5, totalReviews: 87 },
     portfolioImages: [
-      "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&q=80",
-      "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&q=80"
+      "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600w=800&q=80q=75w=800&q=80auto=format",
+      "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600w=800&q=80q=75w=800&q=80auto=format"
     ],
     isFavorite: false,
     verified: true,
