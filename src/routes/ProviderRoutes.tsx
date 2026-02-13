@@ -35,6 +35,9 @@ import SupplierPage from "../pages/provider/crm/Supplier";
 import Notifications from "../pages/provider/Notification";
 import EmailTemplates from "../pages/provider/crm/Emailtemplate";
 import FeatureRoute from "./FeatureRoute";
+import ProviderAnalyticsDashboard from "../pages/provider/Analytics";
+import MessagingPage from "../pages/shared/Messaging";
+import PackageManagementPage from "../pages/provider/PackageManagement";
 
 const ProviderRoutes: React.FC = () => {
   return (
@@ -45,7 +48,9 @@ const ProviderRoutes: React.FC = () => {
       <Route path="/requests" element={<Requests />} />
       <Route path="/showcase" element={<Showcase />} />
       <Route path="/dashboard" element={<Providerdashboard />} />
-      <Route path="/roadmap" element={<Roadmap />} />
+      <Route path="/analytics" element={<ProviderAnalyticsDashboard />} />
+      <Route path="/messages" element={<MessagingPage />} />
+      <Route path="/packages" element={<PackageManagementPage />} />
       <Route path="/plans" element={<Plans />} />
 
       <Route

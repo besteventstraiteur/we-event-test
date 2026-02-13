@@ -1,0 +1,569 @@
+📚 CAHIER DES CHARGES DÉTAILLÉ - MVP WE EVENT
+🎯 1. VISION GÉNÉRALE DE LA PLATEFORME
+Nom du projet : We Event
+Objectif principal : We Event est une plateforme événementielle tout-en-un, conçue pour simplifier l'organisation de mariages et autres événements spéciaux. Elle met en relation clients et prestataires, et offre des outils de gestion pour chaque rôle (Client, Partenaire, Administrateur).
+Publics cibles :
+Clients : Particuliers organisant un événement (mariage, anniversaire, etc.).
+Partenaires : Prestataires de services événementiels (photographes, DJs, traiteurs, lieux, décorateurs, etc.).
+Administrateurs : Équipe interne We Event pour la gestion et la supervision de la plateforme.
+État actuel de la MVP : La MVP dispose d'une interface utilisateur (UI) et d'une expérience utilisateur (UX) très abouties, avec un design moderne, réactif et des animations fluides. Cependant, la majeure partie des fonctionnalités est actuellement "mockée" (simulée avec des données statiques en frontend) et n'est pas connectée à un backend persistant. L'application est développée avec React, TypeScript et Tailwind CSS sur la plateforme Base44.
+💻 2. ARCHITECTURE TECHNIQUE ET STACK
+Frontend : React, TypeScript, Tailwind CSS, Shadcn/UI, Framer Motion, date-fns, recharts, react-router-dom, react-hook-form, react-markdown, react-quill.
+Backend / BaaS : Plateforme Base44.
+Base de données : Gérée par Base44 (basée sur des entités JSON Schema).
+Authentification : Gérée par Base44.
+Fonctions Backend (Deno) : Pour les logiques métier complexes ou les intégrations externes.
+Intégrations : base44.integrations.Core pour l'upload de fichiers, etc.
+SDK : base44 client pour interagir avec les entités, fonctions et l'authentification.
+Fichiers : Stockage géré par Base44.
+📦 3. ENTITÉS DE LA BASE DE DONNÉES
+Toutes les entités suivantes ont été définies dans le backend Base44 (fichiers entities/*.json). Chaque enregistrement inclut automatiquement id, created_date, updated_date, created_by.
+User (Entité Base44 étendue)
+Attributs supplémentaires à envisager : address, phone_number, profile_picture_url, event_preferences, etc.
+Rôles : admin, user (client), partner.
+Event (Événements clients)
+title (string) : Titre de l'événement.
+event_type (enum: Mariage, Anniversaire, Corporate, Gala, Autre)
+event_date (date)
+location (string)
+city (string)
+department (string)
+guests_count (integer) : Nombre d'invités prévus.
+guests_confirmed (integer, default: 0) : Nombre d'invités confirmés.
+budget (number)
+status (enum: draft, planning, confirmed, completed, cancelled, default: draft)
+mini_site_slug (string) : Slug pour l'URL du mini-site.
+mini_site_published (boolean, default: false)
+client_id (string, lien vers User)
+partner_ids (array of strings, lien vers Partner)
+Partner (Profils prestataires)
+user_email (string) : Email de l'utilisateur lié (clé unique).
+company_name (string)
+category (enum: Photo/Vidéo, DJ, Lieu, Traiteur, Décoration, Son/Lumière, Animation, Autre)
+description (string)
+location (string)
+phone (string)
+website (string)
+rating (number, default: 0)
+reviews_count (integer, default: 0)
+events_count (integer, default: 0)
+subscription (enum: Basic, Standard, Premium, default: Basic)
+status (enum: pending, active, suspended, default: pending)
+verified (boolean, default: false)
+gamification_points (integer, default: 0)
+Package (Offres de services par les partenaires)
+partner_id (string, lien vers Partner)
+name (string)
+description (string)
+category (string)
+price (number)
+price_unit (enum: forfait, par_personne, par_heure, par_jour, default: forfait)
+features (array of strings) : Prestations incluses.
+images (array of strings) : URLs des images (stockées via UploadFile).
+status (enum: draft, pending, approved, rejected, default: draft)
+sales_count (integer, default: 0)
+revenue (number, default: 0)
+Booking (Réservations de packages par les clients)
+event_id (string, lien vers Event)
+package_id (string, lien vers Package)
+partner_id (string, lien vers Partner)
+client_email (string)
+amount (number)
+status (enum: pending, confirmed, completed, cancelled, default: pending)
+payment_status (enum: unpaid, partial, paid, default: unpaid)
+notes (string)
+Message (Messages individuels dans une conversation)
+conversation_id (string, lien vers Conversation)
+sender_email (string)
+sender_name (string)
+content (string)
+attachments (array of strings) : URLs des fichiers joints.
+read (boolean, default: false)
+Conversation (Regroupe les messages entre un client et un partenaire pour un événement)
+client_email (string)
+partner_id (string, lien vers Partner)
+event_id (string, lien vers Event)
+last_message (string)
+last_message_date (datetime)
+unread_count (integer, default: 0)
+status (enum: active, archived, default: active)
+Photo (Photos événementielles)
+event_id (string, lien vers Event)
+url (string) : URL de la photo (stockée via UploadFile).
+uploader_email (string)
+uploader_name (string)
+type (enum: pro, guest) : Photo professionnelle ou invité.
+category (enum: cérémonie, réception, soirée, décoration, portraits, groupe, autre)
+likes (integer, default: 0)
+liked_by (array of strings) : Emails des utilisateurs ayant liké.
+Video (Vidéos événementielles)
+event_id (string, lien vers Event)
+title (string)
+url (string) : URL de la vidéo (stockée via UploadFile).
+thumbnail (string) : URL de la miniature.
+uploader_email (string)
+uploader_name (string)
+type (enum: pro, guest)
+duration (string, format: MM:SS)
+status (enum: draft, review, approved, published, default: draft)
+VideoComment (Commentaires horodatés sur les vidéos)
+video_id (string, lien vers Video)
+author_email (string)
+author_name (string)
+timecode (integer) : Position dans la vidéo en ms.
+selection_start (integer) : Début de sélection en ms.
+selection_end (integer) : Fin de sélection en ms.
+text (string)
+Contract (Contrats entre client et partenaire)
+booking_id (string, lien vers Booking)
+contract_number (string)
+client_email (string)
+partner_id (string, lien vers Partner)
+service (string)
+amount (number)
+content (string) : Contenu HTML ou texte du contrat.
+status (enum: draft, pending, signed, cancelled, default: draft)
+signed_date (datetime)
+signature_data (string) : Données de signature (base64).
+signer_name (string)
+signer_ip (string)
+Invoice (Factures)
+booking_id (string, lien vers Booking)
+invoice_number (string)
+client_email (string)
+partner_id (string, lien vers Partner)
+provider_name (string)
+service (string)
+amount (number)
+status (enum: pending, paid, overdue, cancelled, default: pending)
+due_date (date)
+paid_date (date)
+stripe_payment_intent_id (string) : ID de transaction Stripe.
+Task (Tâches pour les événements)
+event_id (string, lien vers Event)
+assigned_to_email (string)
+title (string)
+description (string)
+due_date (date)
+priority (enum: low, medium, high, default: medium)
+status (enum: todo, in_progress, done, default: todo)
+category (string)
+Playlist (Playlists musicales clients)
+event_id (string, lien vers Event)
+name (string)
+songs (array of objects: {title: string, artist: string, duration: string, moment: string})
+avoid_songs (array of strings)
+mood (string)
+dj_partner_id (string, lien vers Partner)
+status (enum: draft, shared, confirmed, default: draft)
+MenuItem (Éléments du menu traiteur)
+event_id (string, lien vers Event)
+name (string)
+category (enum: entrée, plat, dessert, boisson, autre)
+description (string)
+allergens (array of strings)
+dietary_tags (array of strings: végétarien, vegan, sans gluten, halal, casher)
+price_per_person (number)
+available (boolean, default: true)
+GuestMenuChoice (Choix de menu par invité)
+event_id (string, lien vers Event)
+guest_name (string)
+guest_email (string)
+starter_id (string, lien vers MenuItem)
+main_course_id (string, lien vers MenuItem)
+dessert_id (string, lien vers MenuItem)
+allergies (string)
+special_requests (string)
+table_number (integer)
+Inspiration (Contenus d'inspiration pour les clients)
+title (string)
+image_url (string)
+category (string, lien vers Category)
+theme (string)
+tags (array of strings)
+photographer_id (string, lien vers Partner)
+photographer_name (string)
+partners (array of objects: {id: string, name: string, type: string})
+likes (integer, default: 0)
+views (integer, default: 0)
+status (enum: draft, published, default: draft)
+Category (Catégories d'inspiration)
+name (string)
+slug (string)
+count (integer, default: 0)
+active (boolean, default: true)
+order (integer)
+Trend (Tendances (pour l'inspiration))
+name (string)
+icon (string) : Emoji ou nom d'icône.
+active (boolean, default: true)
+order (integer)
+UserInspiration (Inspirations sauvegardées par les clients)
+user_email (string)
+event_id (string, lien vers Event)
+inspiration_id (string, lien vers Inspiration)
+Podcast (Contenus audio)
+title (string)
+description (string)
+provider (string)
+type (enum: podcast, talkshow)
+audio_url (string)
+cover_emoji (string)
+duration (string, format: HH:MM:SS)
+theme (enum: Mariage, Témoignages, Conseils Pro, Tendances, Organisation, Budget, Décoration, Autre)
+listens (integer, default: 0)
+rating (number, default: 0)
+ratings_count (integer, default: 0)
+status (enum: draft, published, default: draft)
+EventSite (Configuration des mini-sites événementiels)
+event_id (string, lien vers Event)
+slug (string)
+title (string)
+cover_image (string)
+welcome_message (string)
+modules (object: {guestBook: boolean, guestBookText: boolean, guestBookAudio: boolean, guestBookVideo: boolean, crowdfunding: boolean, photoVideo: boolean, menuChoice: boolean, schedule: boolean})
+crowdfunding_url (string)
+theme (enum: elegant, romantic, modern, boheme, default: elegant)
+primary_color (string, default: #1e3a5f)
+schedule (array of objects: {time: string, title: string, location: string})
+published (boolean, default: false)
+Ambassador (Ambassadeurs de zone)
+partner_id (string, lien vers Partner)
+user_email (string)
+name (string)
+zone (string)
+departments (string) : Départements couverts (CSV).
+partners_recruited (integer, default: 0)
+commission_earned (number, default: 0)
+commission_rate (number, default: 10)
+status (enum: active, inactive, default: active)
+Badge (Définition des badges de gamification)
+name (string)
+description (string)
+icon (string) : Nom de l'icône Lucide React.
+criteria (string) : Critères d'obtention.
+points_value (integer)
+rarity (enum: common, rare, epic, legendary, default: common)
+active (boolean, default: true)
+PartnerBadge (Badges attribués aux partenaires)
+partner_id (string, lien vers Partner)
+badge_id (string, lien vers Badge)
+earned_date (datetime)
+Dispute (Gestion des litiges)
+booking_id (string, lien vers Booking)
+client_email (string)
+client_name (string)
+partner_id (string, lien vers Partner)
+partner_name (string)
+reason (string)
+description (string)
+status (enum: open, in_progress, resolved, closed, default: open)
+resolution (string)
+resolved_date (datetime)
+PlatformConfig (Configuration globale de la plateforme)
+config_key (string) : Clé unique (ex: main_config).
+platform_name (string)
+support_email (string)
+support_phone (string)
+platform_commission (number, default: 15)
+ambassador_commission (number, default: 10)
+notifications (object: {new_partners: boolean, disputes: boolean, packages_pending: boolean})
+security (object: {require_2fa_admin: boolean, require_email_verification: boolean})
+RoomPlan (Plans de salle prédéfinis)
+name (string)
+width (number)
+length (number)
+capacity (integer)
+floor_material (string)
+wall_material (string)
+elements (array of objects) : Éléments du plan.
+AdvantageConfig (Configuration des avantages)
+link (string)
+description (string)
+🔒 4. AUTHENTIFICATION ET AUTORISATION
+L'authentification est gérée par la plateforme Base44.
+Connexion/Inscription : Utilisez base44.auth.redirectToLogin() pour rediriger vers la page de connexion Base44.
+Utilisateur actuel : Utilisez base44.auth.me() pour récupérer l'objet user (id, email, full_name, role).
+Vérification de rôle : user.role (admin, user, partner) doit être utilisé sur chaque page ou composant nécessitant un accès restreint. Rediriger ou afficher un message d'erreur si le rôle n'est pas autorisé.
+Mise à jour profil : base44.auth.updateMe(data) pour les attributs supplémentaires du User (ex: phone_number, profile_picture_url).
+Protection des routes : Sur chaque page (e.g. pages/ClientDashboard.js, pages/AdminPartners.js), implémenter la logique suivante :
+import { base44 } from '@/api/base44Client';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+export default function ClientDashboard() {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        if (!currentUser || currentUser.role !== 'user') { // Ou 'partner' / 'admin' selon la page
+          base44.auth.redirectToLogin(); // Redirection vers le login si non connecté ou mauvais rôle
+          return;
+        }
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Erreur d'authentification:", error);
+        base44.auth.redirectToLogin();
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+  if (!user) {
+    return <div>Chargement de l'utilisateur...</div>; // Ou un spinner de chargement
+  }
+  // ... Reste du code de la page ...
+}
+🌐 5. FONCTIONNALITÉS PAR MODULE (Frontend & Backend)
+5.1. PARTIE PUBLIQUE
+Landing Page (pages/Landing.js)
+Afficher les informations de la plateforme.
+Les sections "Admin", "Client", "Partner" doivent rediriger vers les pages de login correspondantes (via base44.auth.redirectToLogin()) puis vers leur tableau de bord.
+Backend : Aucune interaction directe, mais les données des sections (ex: nombre de partenaires/clients) pourraient venir de statistiques agrégées (via une fonction backend ou un dashboard Admin).
+Marketplace (pages/Marketplace.js)
+Afficher la liste des Package et Bundle disponibles.
+Filtrer par catégorie (Partner.category), prix, localisation (Partner.location).
+Trier par pertinence, popularité, prix.
+Afficher les détails d'un Package ou Bundle (description, features, images).
+Action : "Contacter le prestataire" -> Rediriger vers la messagerie client-partenaire pour cet Partner. "Réserver" -> Lancer le processus de Booking.
+Backend : base44.entities.Package.list(), base44.entities.Bundle.list(), base44.entities.Partner.list().
+Inspirations (pages/Inspirations.js)
+Afficher une galerie d'images (Inspiration).
+Filtrer par Category, Theme, Tags.
+Afficher le photographe (Partner) et les partenaires associés (Partner).
+Action : "J'aime" / "Sauvegarder" -> Enregistrer dans UserInspiration.
+Backend : base44.entities.Inspiration.list(), base44.entities.Category.list(), base44.entities.UserInspiration.create()/delete().
+Podcasts (pages/PublicPodcasts.js)
+Afficher la liste des Podcast.
+Filtrer par Theme, Type (podcast/talkshow).
+Lecture audio/vidéo intégrée.
+Backend : base44.entities.Podcast.list().
+5.2. PARTIE CLIENT (Connecté à Event et User)
+Dashboard (pages/ClientDashboard.js)
+Afficher un aperçu de l'événement en cours (Event).
+Statut, date, localisation, nombre d'invités.
+Liste des Task en cours, Booking confirmées, Invoice à payer.
+Backend : base44.entities.Event.filter({created_by: user.email}), base44.entities.Task.filter({event_id: event.id}), base44.entities.Booking.filter({event_id: event.id}), base44.entities.Invoice.filter({client_email: user.email}).
+Inspiration (pages/ClientInspiration.js)
+Identique à la partie publique, mais avec la possibilité de sauvegarder des Inspiration pour son Event dans UserInspiration.
+"Mon Moodboard" doit afficher les Inspiration sauvegardées (UserInspiration.filter({user_email: user.email, event_id: current_event.id})).
+Action : Supprimer de son moodboard.
+Backend : base44.entities.UserInspiration.create()/delete().
+Photos (pages/ClientPhotos.js)
+Afficher les Photo pour l'événement.
+Filtrer par type (pro/guest), category.
+Lien de collecte (EventSite.photoVideo module) : Un lien unique (createFileSignedUrl pour upload) pour les invités et le photographe afin d'uploader des photos. Ces uploads doivent créer de nouvelles Photo en BDD.
+Action : "J'aime" (Photo.likes, Photo.liked_by), "Télécharger" une photo (via CreateFileSignedUrl si privée).
+Backend : base44.entities.Photo.filter({event_id: event.id}), base44.integrations.Core.UploadFile() (pour l'upload invité/photographe), base44.integrations.Core.CreateFileSignedUrl() pour le téléchargement.
+Vidéos (pages/ClientVideos.js)
+Afficher les Video pour l'événement.
+Filtrer par type (pro/guest).
+Lien de collecte pour les invités (upload de Video).
+Fonctionnalité : Player vidéo avec timecode et commentaires.
+Les VideoComment doivent être affichés sur la timeline.
+Un client peut ajouter des VideoComment à une vidéo (VideoComment.create()).
+Backend : base44.entities.Video.filter({event_id: event.id}), base44.integrations.Core.UploadFile(), base44.entities.VideoComment.list()/create().
+Menu & Tables (pages/ClientCatering.js)
+Gérer les MenuItem proposés par le traiteur (Partner).
+Les clients peuvent indiquer les préférences de menu pour leurs invités (GuestMenuChoice).
+Fonctionnalité : Plan de table dynamique, visualisation et organisation des tables.
+Backend : base44.entities.MenuItem.list(), base44.entities.GuestMenuChoice.list()/create()/update().
+Playlist DJ (pages/ClientPlaylist.js)
+Le client crée sa Playlist pour l'événement.
+Ajouter des morceaux, titres à éviter, moments spécifiques.
+Partager avec le Partner DJ.
+Backend : base44.entities.Playlist.create()/update().
+Podcast (pages/ClientPodcast.js)
+Identique à la partie publique, mais peut-être avec des options supplémentaires liées à l'événement (ex: un podcast de mariage enregistré sur la plateforme).
+Backend : base44.entities.Podcast.list().
+Plan de salle (pages/ClientFloorPlan.js)
+Utilise l'entité RoomPlan et permet de définir les éléments.
+Visualisation 2D et 3D de la disposition des tables et éléments.
+Lien avec GuestMenuChoice pour l'affectation des invités aux places.
+Backend : base44.entities.RoomPlan.list()/create()/update().
+Documents (pages/ClientDocuments.js)
+Générer des documents (briefing, récap) à partir de modèles.
+Personnaliser avec logo, couleurs (via EventSite settings).
+Exporter en PDF/Word (utiliser jsPDF côté client ou une fonction backend pour un rendu plus complexe).
+Backend : Une fonction backend (functions/generateDocument.js) pourrait être utilisée pour la génération de PDF complexes avec des données d'événement, puis stocker le fichier généré via UploadFile().
+Facturation (pages/ClientBilling.js)
+Afficher les Invoice liées à l'événement.
+Statut de paiement, dates d'échéance.
+Action : "Payer" -> Intégration Stripe pour un paiement sécurisé.
+Backend : base44.entities.Invoice.filter(), Intégration Stripe (via fonctions backend pour créer PaymentIntents).
+Notifications (pages/ClientNotifications.js)
+Afficher les Notification pour le client.
+Filtrer par lues/non lues.
+Backend : base44.entities.Notification.filter({user_email: user.email}).
+Messages (pages/ClientMessages.js)
+Liste des Conversation du client.
+Vue détaillée d'une Conversation avec les Message associés.
+Fonctionnalité : Envoyer des messages, joindre des fichiers (UploadFile).
+Backend : base44.entities.Conversation.list(), base44.entities.Message.list()/create(). Utiliser des abonnements temps réel (base44.entities.Message.subscribe()) pour les nouveaux messages.
+Contrats (pages/ClientContracts.js)
+Afficher les Contract du client.
+Statut (brouillon, en attente, signé).
+Fonctionnalité : Visualisation du contrat, signature électronique (avec signature_data base64).
+Backend : base44.entities.Contract.list()/update().
+Assistant IA (pages/ClientAI.js)
+Intégration d'un agent AI ou de base44.integrations.Core.InvokeLLM pour aider à la planification.
+Backend : base44.integrations.Core.InvokeLLM().
+5.3. PARTIE PARTENAIRE (Connecté à Partner et User)
+Dashboard (pages/PartnerDashboard.js)
+Aperçu des performances du Partner : events_count, rating, reviews_count.
+Liste des Booking confirmées et des Task assignées.
+Gamification : Afficher les Badge obtenus (PartnerBadge) et la progression.
+Backend : base44.entities.Partner.get(partner.id), base44.entities.Booking.filter({partner_id: partner.id}), base44.entities.Task.filter({assigned_to_email: user.email}), base44.entities.PartnerBadge.filter({partner_id: partner.id}), base44.entities.Badge.list().
+Calendrier (pages/PartnerCalendar.js)
+Afficher les Booking et les indisponibilités du Partner.
+Gérer les disponibilités (empêcher les Booking en cas de conflit).
+Backend : base44.entities.Booking.filter({partner_id: partner.id}).
+Statistiques (pages/PartnerStats.js)
+Tableaux de bord dynamiques avec recharts (revenus, nombre d'événements, satisfaction).
+Basés sur les Booking, Invoice, Review liés au Partner.
+Backend : Agrégation de données via des requêtes base44.entities.Booking.filter(), base44.entities.Invoice.filter(), base44.entities.Review.filter() ou une fonction backend spécifique pour des calculs complexes.
+Galerie (pages/PartnerGallery.js)
+Afficher les Photo et Video du Partner.
+Action : Upload de nouvelles photos/vidéos (UploadFile).
+Backend : base44.entities.Photo.filter({uploader_email: user.email}), base44.entities.Video.filter({uploader_email: user.email}), base44.integrations.Core.UploadFile().
+Plan de salle (pages/PartnerFloorPlan.js)
+Pour les partenaires "Lieu", gérer les RoomPlan.
+Backend : base44.entities.RoomPlan.filter({created_by: user.email}).
+Gestion des Packages (pages/PartnerBundleCreation.js, pages/PartnerMarketplace.js)
+Créer et gérer les Package (Package.create()/update()/delete()).
+Définir prix, features, images (UploadFile).
+Soumettre pour validation (Package.status = 'pending').
+Backend : base44.entities.Package.list()/create()/update()/delete().
+Gamification (pages/PartnerGamification.js)
+Afficher les badges (Badge, PartnerBadge) et le classement.
+Logique d'attribution des badges (peut être via des automations Base44 ou fonctions backend écoutant les événements Review ou Booking).
+Backend : base44.entities.Badge.list(), base44.entities.PartnerBadge.filter().
+Messages (pages/PartnerMessages.js)
+Identique à ClientMessages, mais pour le partenaire.
+Backend : base44.entities.Conversation.list(), base44.entities.Message.list()/create().
+Tâches (pages/PartnerTasks.js)
+Créer et gérer les Task liées à ses événements.
+Backend : base44.entities.Task.list()/create()/update()/delete().
+Mini-sites (pages/PartnerMiniSites.js, pages/PartnerMiniSiteBuilder.js)
+Pour certains partenaires (ex: photographes, lieux), gestion de leur propre mini-site ou page de présentation.
+Backend : Entité PartnerMiniSite (à créer si besoin), ou réutilisation d'EventSite avec partner_id.
+5.4. PARTIE ADMINISTRATEUR (Connecté à tous les Entity)
+Dashboard (pages/AdminDashboard.js)
+Vue d'ensemble de l'activité plateforme : nombre d'utilisateurs (User), partenaires (Partner), événements (Event), transactions (Invoice, Booking).
+Statistiques globales.
+Backend : base44.entities.User.list(), base44.entities.Partner.list(), base44.entities.Event.list(), agrégations diverses.
+Gestion Partenaires (pages/AdminPartners.js)
+Liste de tous les Partner.
+Actions : Modifier Partner.status (pending -> active/suspended), verified, subscription.
+Gérer les litiges (Dispute).
+Backend : base44.entities.Partner.list()/update(), base44.entities.Dispute.list().
+Gestion Clients (pages/AdminClients.js)
+Liste de tous les User (rôle 'user') et Event.
+Voir les Invoice, Contract, Booking d'un client.
+Backend : base44.entities.User.filter({role: 'user'}), base44.entities.Event.list(), base44.entities.Invoice.list(), etc.
+Gestion Marketplace (pages/AdminMarketplace.js)
+Liste des Package avec statut pending.
+Actions : Valider/rejeter (Package.status = 'approved'/'rejected').
+Gérer les Bundle.
+Backend : base44.entities.Package.filter({status: 'pending'})/update(), base44.entities.Bundle.list()/create()/update()/delete().
+Gestion Inspirations (pages/AdminInspirations.js)
+Gérer les Inspiration, Category, Trend.
+Actions : Ajouter/Modifier/Supprimer.
+Backend : base44.entities.Inspiration.list()/create()/update()/delete(), base44.entities.Category.list()/create()/update()/delete(), base44.entities.Trend.list()/create()/update()/delete().
+Statistiques (pages/AdminStats.js)
+Tableaux de bord consolidés pour toute la plateforme.
+Tableaux de bord dynamiques (nombre d'inscriptions, abonnements actifs, taux de rétention, événements créés, budget moyen).
+Rapports exportables (Excel/PDF) - nécessiterait une fonction backend dédiée.
+Backend : Agrégations sur toutes les entités, potentiellement via des fonctions backend optimisées pour les rapports.
+Ambassadeurs (pages/AdminAmbassadors.js)
+Gérer les Ambassador.
+Actions : Créer un Ambassador en liant à un Partner, modifier zones.
+Suivre les partenaires recrutés (Ambassador.partners_recruited) et commissions (Ambassador.commission_earned).
+Backend : base44.entities.Ambassador.list()/create()/update(), base44.entities.Partner.list().
+Règle métier : Mettre en place une Automation Base44 (Entity Event type: 'create' sur Partner) qui, si Partner n'a pas de parrainage, assigne à l'Ambassador du département concerné et incrémente partners_recruited.
+Awards (pages/AdminAwards.js)
+Gérer les Badge et PartnerBadge.
+Définir les critères d'attribution des badges.
+Backend : base44.entities.Badge.list()/create()/update()/delete(), base44.entities.PartnerBadge.list()/delete().
+Paramètres (pages/AdminSettings.js)
+Modifier les configurations globales de la plateforme (PlatformConfig).
+Ex: commissions, notifications.
+Backend : base44.entities.PlatformConfig.get()/update().
+🔀 6. INTERACTIONS ENTRE MODULES ET BACK OFFICE
+Flux Client-Partenaire :
+Un client organise un Event.
+Il cherche des Package sur la Marketplace.
+Il réserve un Package -> création d'un Booking.
+Le Booking génère potentiellement un Contract et une Invoice.
+Client et partenaire communiquent via Message dans une Conversation liée au Booking ou à l'Event.
+Après l'événement, le client peut laisser une Review pour le Partner.
+Flux Partenaire-Plateforme :
+Un User s'inscrit comme Partner.
+L'Admin peut valider son statut (Partner.status).
+Le Partner crée ses Package et les soumet à l'Admin pour approbation.
+Le Partner reçoit des notifications (Notification) pour les nouveaux Booking ou messages.
+La gamification (Badge, PartnerBadge) est mise à jour automatiquement.
+Flux Admin :
+L'Admin supervise tous les Event, Partner, User, Booking, Invoice, Dispute.
+L'Admin valide les Package (Package.status).
+L'Admin gère les Ambassador.
+L'Admin configure les paramètres globaux (PlatformConfig).
+Mini-sites :
+Un client (User) peut configurer un EventSite pour son Event.
+Le EventSite regroupe les Photo, Video, GuestBook, GuestMenuChoice spécifiques à l'événement.
+Le slug du EventSite est lié à l'Event.
+Uploads : Tous les uploads de fichiers (images de Package, Inspiration, Photo, Video, pièces jointes de Message, documents générés) doivent utiliser base44.integrations.Core.UploadFile() et stocker les file_url dans les entités correspondantes. Pour les fichiers privés, UploadPrivateFile et CreateFileSignedUrl doivent être utilisés.
+🛠️ 7. DÉVELOPPEMENT ET OUTILS SPÉCIFIQUES
+Utilisation du SDK Base44 :
+CRUD Entités : base44.entities.EntityName.list(), .get(id), .create(data), .update(id, data), .delete(id).
+Authentification : base44.auth.me(), base44.auth.updateMe(), base44.auth.redirectToLogin().
+Upload de fichiers : base44.integrations.Core.UploadFile(), base44.integrations.Core.UploadPrivateFile(), base44.integrations.Core.CreateFileSignedUrl().
+Fonctions Backend : base44.functions.invoke('functionName', payload).
+Abonnements temps réel : base44.entities.EntityName.subscribe() pour les messages, notifications, etc.
+Gestion d'état : useState, useEffect, useQuery de @tanstack/react-query pour la gestion des données asynchrones et du cache.
+Composants UI : Utiliser les composants Shadcn/UI existants et les étendre si nécessaire.
+Animations : framer-motion pour des transitions fluides.
+Génération de PDF : jspdf pour la génération de documents côté client. Une fonction backend pourrait être envisagée pour des besoins plus complexes ou pour gérer de gros volumes de données.
+Intégration Stripe : Nécessitera la configuration de secrets (API keys) via l'interface Base44 et l'implémentation de fonctions backend pour créer des PaymentIntent et gérer les webhooks.
+📝 8. POINTS D'ATTENTION ET RÈGLES DE DÉVELOPPEMENT
+Sécurité :
+Toujours vérifier les rôles (user.role) avant d'autoriser l'accès ou les actions sensibles.
+Valider les entrées utilisateur côté frontend et backend (si fonctions backend).
+Gérer les file_url sensibles via UploadPrivateFile et CreateFileSignedUrl avec des durées de vie limitées.
+Performance :
+Utiliser useQuery pour optimiser les appels API et le caching.
+Implémenter le chargement progressif (pagination, infinite scroll) pour les grandes listes.
+Optimiser les requêtes BDD (filtres, tris).
+Expérience Utilisateur :
+Afficher des indicateurs de chargement (Loader2 icon) pour toutes les opérations asynchrones.
+Utiliser des toasts (sonner) pour les retours utilisateur (succès, erreur, info).
+Maintenir la cohérence visuelle et interactive de la MVP.
+Gestion des erreurs :
+Implémenter des try/catch pour les appels API dans les fonctions backend.
+Gérer les états d'erreur dans le frontend.
+Code Propre : Respecter les conventions de nommage, la modularité (composants petits et réutilisables), et la lisibilité du code.
+🚀 9. FEUILLE DE ROUTE RECOMMANDÉE POUR LE DÉVELOPPEUR
+Phase d'initialisation (1-2 jours) :
+Cloner le projet Base44.
+Vérifier que toutes les entités (entities/*.json) sont bien déployées sur Base44.
+Mettre en place l'authentification base44.auth.me() et les redirections par rôle sur toutes les pages principales (DashboardLayout, ClientDashboard, PartnerDashboard, AdminDashboard, etc.).
+Remplacer les userName hardcodés par user.full_name ou user.email.
+Phase de connexion Backend - Modules Clients (Priorité Haute) :
+ClientDashboard : Afficher les vrais événements, tâches, réservations, factures.
+ClientMessages : Connecter Conversation et Message avec abonnement temps réel.
+ClientPhotos / ClientVideos : Connecter Photo et Video, implémenter l'upload via base44.integrations.Core.UploadFile() et le lien de collecte.
+ClientMiniSite : Persister les configurations dans EventSite.
+ClientInspiration : Utiliser Inspiration et UserInspiration pour le moodboard.
+Phase de connexion Backend - Modules Partenaires (Priorité Moyenne) :
+PartnerDashboard : Afficher les vrais événements, stats, badges.
+PartnerMarketplace : Connecter la création/édition des Package.
+PartnerCalendar : Afficher les événements du partenaire (Booking).
+Phase de connexion Backend - Modules Administrateurs (Priorité Moyenne) :
+AdminPartners / AdminClients / AdminMarketplace : Lister et gérer les entités correspondantes. Implémenter la validation des Package par l'admin.
+AdminAmbassadors : Lier à l'entité Ambassador, gérer le recrutement de partenaires. Mettre en place l'automation pour l'attribution automatique.
+AdminSettings : Persister les configurations dans PlatformConfig.
+Phase d'Intégrations et Avancées (Priorité Moyenne/Basse) :
+ClientBilling : Intégration Stripe pour le paiement des Invoice.
+ClientDocuments : Rendre la génération de PDF fonctionnelle avec les données réelles et la possibilité de sauvegarder le PDF généré.
+ClientContracts : Implémenter la signature électronique.
+Gamification : Mettre en place la logique d'attribution des Badge et l'incrémentation des gamification_points pour les Partner.

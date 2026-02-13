@@ -1,0 +1,48 @@
+# 🎯 Branche Actuelle de Travail
+
+**Branche :** we-event-test-robin
+**Date de changement :** 2026-02-13 14:04 UTC
+**Créée depuis :** feature/contact-redesign-v2
+
+## 📋 Statut Actuel
+
+✅ Branche active : `we-event-test-robin`
+✅ Serveur Vite : Port 5174 (en cours)
+✅ API Backend : https://api-staging.we-event.eu/api
+✅ Configuration : Prête pour les tests
+
+## 🌐 URLs Actuelles
+
+- **Application** : https://5174-i9xmitmdzxd6y5rjumtyh-c07dda5e.sandbox.novita.ai
+- **Login** : https://5174-i9xmitmdzxd6y5rjumtyh-c07dda5e.sandbox.novita.ai/login
+- **Partner V2** : https://5174-i9xmitmdzxd6y5rjumtyh-c07dda5e.sandbox.novita.ai/partners-v2/1
+
+## 🔧 Configuration Technique
+
+```bash
+VITE_API_URL=https://api-staging.we-event.eu/api
+VITE_PLACE_API=AIzaSyBUyl-cCBPqIYXFlPaQ6j_yozS0hVrTbZI
+VITE_ENVIRONMENT=development
+```
+
+## 📊 Derniers Commits
+
+```
+1343317 - docs: Add comprehensive documentation for we-event-test-robin branch
+0154b87 - fix: Add /api prefix to VITE_API_URL for correct API routing
+f12a10a - feat: Configure frontend to use correct staging API domain
+ca63629 - feat: Connect frontend to EC2 backend instance
+90753c9 - feat: Add Vite proxy configuration to solve API connection issues
+```
+
+## 📝 Fichiers Principaux
+
+- `src/pages/ProviderDetailsV2.tsx` - Page partenaires V2
+- `src/styles/provider-details-v2.css` - Styles V2
+- `src/data/fakePartnerDetails.ts` - Données fake
+- `src/routes/ProtectedRoute.tsx` - Routes protégées
+- `ROBIN_BRANCH_INFO.md` - Documentation complète
+
+## 🚀 Prêt pour le Développement
+
+Tous les changements futurs seront effectués sur cette branche.

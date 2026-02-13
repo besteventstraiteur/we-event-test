@@ -20,12 +20,17 @@ import GuestBook from "../pages/client/minisite/GuestBook";
 import Plans from "../pages/client/Plans";
 import ClientChat from "../pages/client/Client-Chat";
 import Notifications from "../pages/provider/Notification";
+import MyBookings from "../pages/client/MyBookings";
+import MessagingPage from "../pages/shared/Messaging";
+
 const ClientRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="dashboard" element={<ProvidersDashboard />} />
 
       <Route path="events" element={<Events />} />
+      <Route path="bookings" element={<MyBookings />} />
+      <Route path="messages" element={<MessagingPage />} />
 
       <Route path="guests/:id" element={<Manageguest />} />
 

@@ -16,6 +16,7 @@ import {
   Tag,
   Users,
   UserStar,
+  CheckCircle2,
 } from "lucide-react";
 import Autocomplete from "react-google-autocomplete";
 import { motion } from "motion/react";
@@ -31,6 +32,7 @@ import { useSelector } from "react-redux";
 import MyFavorite from "../components/ui/MyFavorite";
 import { SimpleRangeSlider } from "react-range-slider-advanced";
 import "react-range-slider-advanced/style.css";
+import { fakePartners, fakeCategories } from "../data/fakePartners";
 
 const customStyles = {
   control: (provided, state) => ({
@@ -56,14 +58,15 @@ const PartnersList = () => {
   const [hasMore, setHasMore] = useState(true);
   const [radiusKm, setRadiusKm] = useState(0);
   const [locationText, setLocationText] = useState("");
+  const [searchName, setSearchName] = useState("");
   const [latLng, setLatLng] = useState({ lat: "", long: "" });
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedBudget, setSelectedBudget] = useState({ from: "", to: "" });
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedSortBy, setSelectedSortBy] = useState(null);
   const [selectedLimit, setSelectedLimit] = useState({
-    value: 10,
-    label: "10",
+    value: 6,
+    label: "6",
   });
   const [paginationData, setPaginationData] = useState();
   const [page, setPage] = useState(1);
@@ -84,15 +87,15 @@ const PartnersList = () => {
   // ];
 
   const sortOptions = [
-    { value: "recent", label: "Most Recent" },
-    { value: "toprated", label: "Top Rated" },
-    { value: "popular", label: "Most Popular" },
+    { value: "recent", label: "Plus récents" },
+    { value: "toprated", label: "Mieux notés" },
+    { value: "popular", label: "Plus populaires" },
   ];
 
   const limitOptions = [
-    { value: 10, label: "10" },
-    { value: 15, label: "15" },
-    { value: 20, label: "20" },
+    { value: 6, label: "6" },
+    { value: 12, label: "12" },
+    { value: 18, label: "18" },
   ];
 
   const googleOptions = useMemo(
@@ -177,8 +180,29 @@ const PartnersList = () => {
         setHasMore(false);
       }
     } catch (err) {
-      if (!append) setPartners([]);
-      setHasMore(false);
+      // Use fake data when API is not available
+      if (import.meta.env.DEV) {
+        console.debug('API not available - using fake partner data');
+        let filteredPartners = [...fakePartners];
+        
+        // Filter by search name if provided
+        if (searchName && searchName.trim() !== '') {
+          filteredPartners = filteredPartners.filter(p => 
+            p.name.toLowerCase().includes(searchName.toLowerCase())
+          );
+        }
+        
+        setPartners(filteredPartners);
+        setPaginationData({ 
+          totalCount: filteredPartners.length, 
+          currentPage: 1, 
+          totalPages: 1 
+        });
+        setHasMore(false);
+      } else {
+        if (!append) setPartners([]);
+        setHasMore(false);
+      }
     } finally {
       setLoadingData(false);
     }
@@ -198,11 +222,17 @@ const PartnersList = () => {
           .sort((a, b) => a.label.localeCompare(b.label));
 
         setCategories(opts);
-      } else {
-        setCategories([]);
       }
-    } catch (e) {
-      setCategories([]);
+    } catch (err) {
+      // Use fake categories when API is not available
+      if (import.meta.env.DEV) {
+        console.debug('API not available - using fake categories');
+        const opts = fakeCategories.map(c => ({
+          value: c.id,
+          label: c.name
+        }));
+        setCategories(opts);
+      }
     } finally {
       setLoadingCats(false);
     }
@@ -225,7 +255,7 @@ const PartnersList = () => {
     setPage(page);
 
     setSelectedLimit(
-      limitOptions.find((l) => l.value === limit) || { value: 10, label: "10" }
+      limitOptions.find((l) => l.value === limit) || { value: 6, label: "6" }
     );
 
     if (lat && long) setLatLng({ lat, long });
@@ -266,6 +296,15 @@ const PartnersList = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Auto-search when searchName changes (with debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProfiles(false);
+    }, 300); // 300ms debounce to avoid too many requests
+
+    return () => clearTimeout(timer);
+  }, [searchName]);
 
   const selectedFilters = [
     locationText && { type: "location", label: locationText },
@@ -329,6 +368,41 @@ const PartnersList = () => {
               <span className="text-xl flex gap-2 items-center font-semibold mb-4">
                 <SlidersHorizontal size={16} /> Filtrer par
               </span>
+              
+              {/* Search by Name */}
+              <div>
+                <span className="flex gap-2 items-center font-medium mb-2">
+                  <Search size={16} /> Rechercher par nom
+                </span>
+                <div className="relative flex-1 w-full">
+                  <Search
+                    className="absolute left-3 top-3.5 text-gray-400"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    value={searchName}
+                    onChange={(e) => {
+                      setSearchName(e.target.value);
+                    }}
+                    className="w-full pl-10 pr-4 py-3 text-sm outline-none placeholder:text-gray-400 border border-gray-300 rounded-lg focus:border-[#093B56] focus:ring-2 focus:ring-[#093B56]/20 transition-all"
+                    placeholder="Nom de l'entreprise..."
+                  />
+                  {searchName && (
+                    <button
+                      onClick={() => {
+                        setSearchName("");
+                        fetchProfiles();
+                      }}
+                      className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                    >
+                      <CircleX size={18} />
+                    </button>
+                  )}
+                </div>
+
+              </div>
+              
               <div>
                 <span className="flex gap-2 items-center font-medium mb-2">
                   <MapPinIcon size={16} /> Lieu
@@ -528,56 +602,118 @@ const PartnersList = () => {
                   Aucune donnée trouvée
                 </div>
               ) : view === "grid" ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {partners.map((p) => (
-                    <div key={p.id} className="provider__blk relative z-1 h-full">
-                      <MyFavorite id={p?.id} isFavorite={p?.isFavorite} />
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                    >
+                      {/* Favorite Button */}
+                      <div className="absolute top-4 left-4 z-20">
+                        <MyFavorite id={p?.id} isFavorite={p?.isFavorite} />
+                      </div>
+
+                      {/* Verified Badge */}
+                      {p.verified && (
+                        <div className="absolute top-4 right-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+                          <span className="text-xs font-semibold text-we-green flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            Vérifié
+                          </span>
+                        </div>
+                      )}
+
                       <Link
                         to={`/partners/${p.id}`}
-                        className="group w-full h-full block relative before:w-full before:h-[calc(100%-120px)] before:bottom-0 before:bg-white before:absolute before:content-[ ] before:-z-1 before:rounded-b-lg"
+                        className="block h-full"
                       >
-                        <div className="absolute top-0 right-0 w-10 h-10 bg-secondary group-hover:bg-tertiary rounded-full flex justify-center items-center ">
-                          <ArrowRight
-                            size={20}
-                            className="text-white group-hover:rotate-[-45deg] transition-transform"
-                          />
-                        </div>
-                        <div className="w-full h-[120px] overflow-hidden image-effect">
+                        {/* Image */}
+                        <div className="relative h-56 overflow-hidden">
                           <img
                             src={p.portfolioImages?.[0] || women}
                             alt={p.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-all"
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          
+                          {/* Arrow Button */}
+                          <div className="absolute bottom-4 right-4 w-12 h-12 bg-[#093B56] group-hover:bg-[#0a4a6b] rounded-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-xl">
+                            <ArrowRight
+                              size={22}
+                              className="text-white"
+                            />
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-2 items-start py-4 px-5">
-                          <div className="flex flex-wrap gap-1">
-                            {p.services?.map((item, idx) => (
+
+                        {/* Content */}
+                        <div className="p-5 space-y-3">
+                          {/* Services Tags */}
+                          <div className="flex flex-wrap gap-2">
+                            {p.services?.slice(0, 2).map((item, idx) => (
                               <span
                                 key={idx}
-                                className="text-gray-600 text-xs border border-gray-200 bg-gray-100 px-2 py-1 rounded-full"
+                                className="text-xs font-medium text-[#093B56] bg-blue-50 px-3 py-1 rounded-full border border-blue-100"
                               >
                                 {item}
                               </span>
                             ))}
+                            {p.services?.length > 2 && (
+                              <span className="text-xs font-medium text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
+                                +{p.services.length - 2}
+                              </span>
+                            )}
                           </div>
-                          <span className="text-lg heading-font font-semibold tracking-wider capitalize relative">
-                            {p.name}
-                          </span>
-                          <span className="text-gray-600 text-sm flex items-start gap-1">
-                            <MapPin size={16} className="flex-shrink-0" />
-                            <span> {p.address || p.city || ""}</span>
-                          </span>
 
-                          <span className="text-gray-600 text-sm flex items-center gap-1">
-                            <StarIcon
-                              size={16}
-                              className="text-yellow-400 fill-yellow-400"
-                            />{" "}
-                            {p.rating?.averageRating || 0}
-                          </span>
+                          {/* Name */}
+                          <h3 className="text-xl font-bold text-gray-900 group-hover:text-we-green transition-colors line-clamp-1">
+                            {p.name}
+                          </h3>
+
+                          {/* Location */}
+                          <div className="flex items-start gap-2 text-gray-600">
+                            <MapPin size={16} className="flex-shrink-0 mt-0.5" />
+                            <span className="text-sm line-clamp-2">{p.city || p.address || ""}</span>
+                          </div>
+
+                          {/* Rating & Stats */}
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                            <div className="flex items-center gap-1">
+                              <StarIcon
+                                size={18}
+                                className="text-amber-400 fill-amber-400"
+                              />
+                              <span className="text-sm font-bold text-gray-900">
+                                {p.rating?.averageRating || 0}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                ({p.rating?.totalReviews || 0})
+                              </span>
+                            </div>
+                            
+                            {p.completedEvents && (
+                              <div className="text-xs text-gray-500 flex items-center gap-1">
+                                <CheckCircle2 size={14} className="text-we-green" />
+                                {p.completedEvents} événements
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Response Time Badge */}
+                          {p.responseTime && (
+                            <div className="flex items-center gap-2 text-xs">
+                              <div className="w-2 h-2 bg-[#093B56] rounded-full animate-pulse" />
+                              <span className="text-gray-600">Répond en {p.responseTime}</span>
+                            </div>
+                          )}
                         </div>
                       </Link>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
@@ -604,6 +740,7 @@ const PartnersList = () => {
                             <img
                               src={p.portfolioImages?.[0] || women}
                               alt={p.name}
+                              loading="lazy"
                               className="w-full h-full object-cover transition-all duration-300 group-hover:scale-120"
                             />
                           </div>
