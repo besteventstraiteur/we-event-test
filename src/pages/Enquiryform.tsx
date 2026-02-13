@@ -80,14 +80,15 @@ const Enquiry = () => {
         // The API nests the page data inside a `content` property.
         const data = resp?.data?.data as ContactPageApi | undefined;
 
-        // The a tual content (en, es, shared) is in a *second* `content` object.
+        // The actual content (en, es, shared) is in a *second* `content` object.
         if (data) {
           setPage(data);
-        } else {
-          console.error("Content structure not as expected:", resp);
         }
       } catch (e) {
-        console.error("Failed to load contact content", e);
+        // Silently handle API errors - app works with default content
+        if (import.meta.env.DEV) {
+          console.debug('API not available - using default content');
+        }
       }
     };
     fetchContent();

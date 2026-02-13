@@ -11,9 +11,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles,
   Layout,
 }) => {
-  const login = useSelector((state) => state?.login);
+  const login = useSelector((state: any) => state?.login);
   const token = login?.access_token || null;
-  const role = login?.user?.role;
+  const role = login?.data?.role; // FIX: Changed from login?.user?.role to login?.data?.role
 
   if (!token) return <Navigate to="/login" replace />;
   if (allowedRoles && role && !allowedRoles.includes(role!))

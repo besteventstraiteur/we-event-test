@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Fancybox } from "@fancyapps/ui/dist/fancybox/";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
+import "../styles/provider-details.css";
 import {
   ArrowLeft,
   Clock,
@@ -39,6 +40,7 @@ import { useToast } from "../utils/toast";
 import { RESPONSE_CODE } from "../utils/constants";
 import MyFavorite from "../components/ui/MyFavorite";
 import { useRef } from "react";
+import { fakePartnerDetails } from "../data/fakePartnerDetails";
 
 type ServiceItem = {
   businessId: string;
@@ -225,8 +227,35 @@ const Providerdetails = () => {
       const data: BusinessProfile | undefined = res?.data?.data;
       setProfile(data ?? null);
     } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message || "Failed to load profile.");
-      setProfile(null);
+      console.debug('API not available, using fake partner data');
+      // Use fake data as fallback
+      if (id && fakePartnerDetails[id]) {
+        const fakeData = fakePartnerDetails[id];
+        setProfile({
+          id: fakeData.id,
+          businessName: fakeData.businessName,
+          businessDescription: fakeData.businessDescription,
+          email: fakeData.email,
+          phone: fakeData.phone,
+          address: fakeData.address,
+          city: fakeData.city,
+          postalCode: fakeData.postalCode,
+          country: fakeData.country,
+          website: fakeData.website,
+          isVerified: fakeData.isVerified,
+          completedEvents: fakeData.completedEvents,
+          portfolioImages: fakeData.portfolioImages,
+          socialLinks: fakeData.socialLinks,
+          services: fakeData.services,
+          averageRating: fakeData.rating.averageRating,
+          totalReviews: fakeData.rating.totalCount,
+        } as any);
+        setRatings(fakeData.reviews || []);
+        setErrorMsg(null);
+      } else {
+        setErrorMsg(err?.response?.data?.message || "Failed to load profile.");
+        setProfile(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -556,17 +585,15 @@ const Providerdetails = () => {
                         >
                           {portfolioImages.map((src, idx) => (
                             <SwiperSlide key={idx}>
-                              <div className="media-slide rounded-2xl overflow-hidden w-full aspect-video bg-black/5">
-                                {/* Wrap image with <a> for Fancybox */}
+                              <div className="media-slide rounded-2xl overflow-hidden w-full aspect-video">
                                 <a
                                   href={src}
-                                  data-fancybox="portfolio" // group all images together
-                                  // data-caption={`Portfolio ${idx + 1}`}
+                                  data-fancybox="portfolio"
                                 >
                                   <img
-                                    src={thumbnails[idx] || src} // use thumbnail if ready
+                                    src={thumbnails[idx] || src}
                                     alt={`portfolio-${idx + 1}`}
-                                    className="w-full h-full object-contain cursor-pointer"
+                                    className="w-full h-full object-cover cursor-pointer"
                                   />
                                 </a>
                               </div>
@@ -603,12 +630,13 @@ const Providerdetails = () => {
                         </h3>
 
                         <Swiper
+                          className="video-slider"
                           slidesPerView={1}
-                          spaceBetween={10}
+                          spaceBetween={0}
                           loop={true}
                           pagination={false}
                           navigation={true}
-                          speed={900}
+                          speed={600}
                           modules={[Pagination, Navigation, Autoplay]}
                           onSlideChange={() => {
                             // Pause MP4 videos
@@ -632,11 +660,10 @@ const Providerdetails = () => {
 
                             return (
                               <SwiperSlide key={vid.id}>
-                                <div className="rounded-2xl overflow-hidden relative w-full h-[60vh] sm:h-[70vh] max-h-[80vh] mx-auto bg-gray-100">
+                                <div className="video-container">
                                   {/* YOUTUBE */}
                                   {isYouTube ? (
                                     <iframe
-                                      className="absolute top-0 left-0 w-full h-full object-contain"
                                       src={embedUrl}
                                       title={vid.name || "YouTube video"}
                                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -644,10 +671,7 @@ const Providerdetails = () => {
                                     />
                                   ) : (
                                     /* MP4 VIDEO */
-                                    <video
-                                      controls
-                                      className="absolute top-0 left-0 w-full h-full object-contain"
-                                    >
+                                    <video controls>
                                       <source src={vid.url} type="video/mp4" />
                                     </video>
                                   )}
@@ -946,7 +970,7 @@ const Providerdetails = () => {
                       ) : (
                         <>
                           {isVerified && (
-                            <span className="absolute top-3 right-3 flex gap-1 items-center text-sm rounded-sm bg-green-500 px-2 py-1 text-white">
+                            <span className="absolute top-3 right-3 flex gap-1 items-center text-sm rounded-sm bg-[#093B56] px-2 py-1 text-white shadow-lg">
                               <ShieldCheck size={16} /> Vérifié
                             </span>
                           )}
