@@ -1,0 +1,615 @@
+// This is your Prisma schema file
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+enum UserRole {
+  CLIENT
+  PROVIDER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
+}
+
+model User {
+  id                String             @id @default(uuid())
+  email             String             @unique
+  password          String
+  role              UserRole           @default(CLIENT)
+  status            UserStatus         @default(ACTIVE)
+  firstName         String?
+  lastName          String?
+  phone             String?
+  avatar            String?
+  emailVerified     Boolean            @default(false)
+  emailVerifiedAt   DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  
+  // Relations
+  businessProfile   BusinessProfile?
+  clientProfile     ClientProfile?
+  events            Event[]
+  bookings          Booking[]
+  ratings           Rating[]
+  messages          Message[]
+  notifications     Notification[]
+  
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ============================================
+// CLIENT & PROVIDER PROFILES
+// ============================================
+
+model ClientProfile {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address         String?
+  city            String?
+  country         String?
+  zipCode         String?
+  dateOfBirth     DateTime?
+  preferences     Json?     // JSON for client preferences
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("client_profiles")
+}
+
+enum BusinessSize {
+  SOLO
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+model BusinessProfile {
+  id                  String          @id @default(uuid())
+  userId              String          @unique
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName        String
+  description         String?         @db.Text
+  logo                String?
+  coverImage          String?
+  size                BusinessSize?
+  phone               String?
+  email               String?
+  address             String?
+  city                String?
+  country             String?
+  zipCode             String?
+  latitude            Float?
+  longitude           Float?
+  website             String?
+  facebookUrl         String?
+  instagramUrl        String?
+  twitterUrl          String?
+  linkedinUrl         String?
+  pinterestUrl        String?
+  verified            Boolean         @default(false)
+  verifiedAt          DateTime?
+  blocked             Boolean         @default(false)
+  blockedReason       String?
+  averageRating       Float           @default(0)
+  totalReviews        Int             @default(0)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  
+  // Relations
+  services            Service[]
+  packages            Package[]
+  photos              Photo[]
+  videos              Video[]
+  documents           Document[]
+  ratings             Rating[]
+  bookings            Booking[]
+  
+  @@index([city])
+  @@index([verified])
+  @@index([averageRating])
+  @@map("business_profiles")
+}
+
+// ============================================
+// EVENTS
+// ============================================
+
+enum EventStatus {
+  DRAFT
+  PLANNING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EventVisibility {
+  PRIVATE
+  PUBLIC
+  RESTRICTED
+}
+
+model Event {
+  id                String            @id @default(uuid())
+  clientId          String
+  client            User              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  categoryId        String?
+  category          Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name              String
+  description       String?           @db.Text
+  thumbnail         String?
+  startDateTime     DateTime
+  endDateTime       DateTime?
+  location          String?
+  address           String?
+  city              String?
+  country           String?
+  zipCode           String?
+  latitude          Float?
+  longitude         Float?
+  expectedGuests    Int?
+  budget            Float?
+  status            EventStatus       @default(PLANNING)
+  visibility        EventVisibility   @default(PRIVATE)
+  notes             String?           @db.Text
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  bookings          Booking[]
+  tasks             Task[]
+  
+  @@index([clientId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([startDateTime])
+  @@map("events")
+}
+
+// ============================================
+// CATEGORIES & SERVICES
+// ============================================
+
+model Category {
+  id              String      @id @default(uuid())
+  name            String      @unique
+  slug            String      @unique
+  description     String?     @db.Text
+  icon            String?
+  color           String?
+  parentId        String?
+  parent          Category?   @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children        Category[]  @relation("CategoryTree")
+  isActive        Boolean     @default(true)
+  displayOrder    Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Relations
+  services        Service[]
+  events          Event[]
+  packages        Package[]
+  
+  @@index([slug])
+  @@index([isActive])
+  @@map("categories")
+}
+
+model Service {
+  id              String          @id @default(uuid())
+  businessId      String
+  business        BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  categoryId      String?
+  category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name            String
+  description     String?         @db.Text
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([businessId])
+  @@index([categoryId])
+  @@map("services")
+}
+
+// ============================================
+// PACKAGES
+// ============================================
+
+model Package {
+  id                String          @id @default(uuid())
+  businessId        String
+  business          BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  categoryId        String?
+  category          Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name              String
+  description       String?         @db.Text
+  price             Float
+  discountPrice     Float?
+  currency          String          @default("EUR")
+  duration          Int?            // Duration in hours
+  minCapacity       Int?
+  maxCapacity       Int?
+  included          Json?           // Array of included items
+  excluded          Json?           // Array of excluded items
+  images            Json?           // Array of image URLs
+  isActive          Boolean         @default(true)
+  isFeatured        Boolean         @default(false)
+  displayOrder      Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  // Relations
+  bookings          Booking[]
+  
+  @@index([businessId])
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@map("packages")
+}
+
+// ============================================
+// BOOKINGS
+// ============================================
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIAL
+}
+
+model Booking {
+  id                String          @id @default(uuid())
+  clientId          String
+  client            User            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  businessId        String
+  business          BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  eventId           String?
+  event             Event?          @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  packageId         String?
+  package           Package?        @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  bookingDate       DateTime
+  eventDate         DateTime
+  numberOfGuests    Int
+  totalPrice        Float
+  currency          String          @default("EUR")
+  status            BookingStatus   @default(PENDING)
+  paymentStatus     PaymentStatus   @default(PENDING)
+  notes             String?         @db.Text
+  clientNotes       String?         @db.Text
+  providerNotes     String?         @db.Text
+  cancellationReason String?        @db.Text
+  cancelledAt       DateTime?
+  confirmedAt       DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  // Relations
+  rating            Rating?
+  messages          Message[]
+  contract          Contract?
+  invoice           Invoice?
+  
+  @@index([clientId])
+  @@index([businessId])
+  @@index([eventId])
+  @@index([packageId])
+  @@index([status])
+  @@index([eventDate])
+  @@map("bookings")
+}
+
+// ============================================
+// RATINGS & REVIEWS
+// ============================================
+
+model Rating {
+  id                String          @id @default(uuid())
+  bookingId         String          @unique
+  booking           Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  clientId          String
+  client            User            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  businessId        String
+  business          BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  rating            Int             // 1-5
+  reviewTitle       String?
+  reviewText        String?         @db.Text
+  response          String?         @db.Text
+  respondedAt       DateTime?
+  isVerified        Boolean         @default(false)
+  isPublished       Boolean         @default(true)
+  helpful           Int             @default(0)
+  notHelpful        Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([businessId])
+  @@index([clientId])
+  @@index([rating])
+  @@index([createdAt])
+  @@map("ratings")
+}
+
+// ============================================
+// MESSAGING
+// ============================================
+
+model Conversation {
+  id                String    @id @default(uuid())
+  participantIds    Json      // Array of user IDs
+  lastMessageAt     DateTime  @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  messages          Message[]
+  
+  @@map("conversations")
+}
+
+model Message {
+  id                String        @id @default(uuid())
+  conversationId    String
+  conversation      Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId          String
+  sender            User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  bookingId         String?
+  booking           Booking?      @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  content           String        @db.Text
+  isRead            Boolean       @default(false)
+  readAt            DateTime?
+  attachments       Json?         // Array of attachment URLs
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+// ============================================
+// MEDIA (PHOTOS & VIDEOS)
+// ============================================
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+model Photo {
+  id                String          @id @default(uuid())
+  businessId        String
+  business          BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  url               String
+  thumbnailUrl      String?
+  title             String?
+  description       String?         @db.Text
+  tags              Json?           // Array of tags
+  displayOrder      Int             @default(0)
+  isPortfolio       Boolean         @default(true)
+  isPublished       Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([businessId])
+  @@index([isPortfolio])
+  @@map("photos")
+}
+
+model Video {
+  id                String          @id @default(uuid())
+  businessId        String
+  business          BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  url               String
+  thumbnailUrl      String?
+  title             String?
+  description       String?         @db.Text
+  platform          String?         // YouTube, Vimeo, etc.
+  embedUrl          String?
+  duration          Int?            // Duration in seconds
+  displayOrder      Int             @default(0)
+  isPublished       Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([businessId])
+  @@map("videos")
+}
+
+// ============================================
+// DOCUMENTS & CONTRACTS
+// ============================================
+
+enum DocumentType {
+  CONTRACT
+  INVOICE
+  QUOTE
+  PORTFOLIO
+  CERTIFICATION
+  OTHER
+}
+
+model Document {
+  id                String          @id @default(uuid())
+  businessId        String
+  business          BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type              DocumentType
+  name              String
+  description       String?         @db.Text
+  url               String
+  fileSize          Int?
+  mimeType          String?
+  isPublic          Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([businessId])
+  @@index([type])
+  @@map("documents")
+}
+
+enum ContractStatus {
+  DRAFT
+  SENT
+  SIGNED
+  CANCELLED
+}
+
+model Contract {
+  id                String          @id @default(uuid())
+  bookingId         String          @unique
+  booking           Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  content           String          @db.Text
+  terms             String?         @db.Text
+  status            ContractStatus  @default(DRAFT)
+  signedByClient    Boolean         @default(false)
+  signedByProvider  Boolean         @default(false)
+  clientSignedAt    DateTime?
+  providerSignedAt  DateTime?
+  pdfUrl            String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([bookingId])
+  @@map("contracts")
+}
+
+// ============================================
+// INVOICES & PAYMENTS
+// ============================================
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model Invoice {
+  id                String          @id @default(uuid())
+  bookingId         String          @unique
+  booking           Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  invoiceNumber     String          @unique
+  subtotal          Float
+  taxRate           Float           @default(0)
+  taxAmount         Float           @default(0)
+  totalAmount       Float
+  currency          String          @default("EUR")
+  status            InvoiceStatus   @default(DRAFT)
+  dueDate           DateTime?
+  paidAt            DateTime?
+  notes             String?         @db.Text
+  pdfUrl            String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([invoiceNumber])
+  @@index([status])
+  @@map("invoices")
+}
+
+// ============================================
+// TASKS & TODOS
+// ============================================
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Task {
+  id                String        @id @default(uuid())
+  eventId           String?
+  event             Event?        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  title             String
+  description       String?       @db.Text
+  status            TaskStatus    @default(TODO)
+  priority          TaskPriority  @default(MEDIUM)
+  dueDate           DateTime?
+  completedAt       DateTime?
+  assignedTo        Json?         // Array of user IDs
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  @@index([eventId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+enum NotificationType {
+  BOOKING
+  MESSAGE
+  RATING
+  PAYMENT
+  SYSTEM
+  REMINDER
+}
+
+model Notification {
+  id                String              @id @default(uuid())
+  userId            String
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              NotificationType
+  title             String
+  message           String              @db.Text
+  link              String?
+  data              Json?
+  isRead            Boolean             @default(false)
+  readAt            DateTime?
+  createdAt         DateTime            @default(now())
+  
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
