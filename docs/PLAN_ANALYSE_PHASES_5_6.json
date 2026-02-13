@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "project": "We Event - Phases 5 & 6",
+    "branch": "we-event-test-robin",
+    "analysis_date": "2026-02-13T15:41:42.456627",
+    "total_entities": 32,
+    "total_modules": 43,
+    "estimated_duration": "8-12 semaines"
+  },
+  "architecture": {
+    "current_stack": {
+      "frontend": [
+        "React 19.1.1",
+        "TypeScript 5.8.3",
+        "Vite 7.1.2",
+        "TailwindCSS 4.1.12"
+      ],
+      "backend_actual": "Node.js/Express (API Staging: api-staging.we-event.eu)",
+      "backend_target": "Base44 BaaS (à migrer)",
+      "database": "PostgreSQL (Staging: EC2 54.154.49.156:5432)",
+      "auth": "Redux + JWT (actuel) -> Base44 Auth (cible)"
+    },
+    "gap_analysis": {
+      "migration_needed": true,
+      "compatibility": "Adapter Base44 SDK vers notre API actuelle",
+      "strategy": "Créer une couche d'abstraction API"
+    }
+  },
+  "entities_analysis": {
+    "existing_in_project": [
+      "User (partiellement)",
+      "Partner (partiellement via BusinessProfile)",
+      "Event (à créer)",
+      "Photo (à créer)",
+      "Video (à créer)"
+    ],
+    "to_create": [
+      "Package",
+      "Booking",
+      "Message",
+      "Conversation",
+      "Contract",
+      "Invoice",
+      "Task",
+      "Playlist",
+      "MenuItem",
+      "GuestMenuChoice",
+      "Inspiration",
+      "Category",
+      "Trend",
+      "UserInspiration",
+      "Podcast",
+      "EventSite",
+      "Ambassador",
+      "Badge",
+      "PartnerBadge",
+      "Dispute",
+      "PlatformConfig",
+      "RoomPlan",
+      "AdvantageConfig",
+      "VideoComment"
+    ]
+  },
+  "modules_breakdown": {
+    "public": {
+      "priority": "HIGH",
+      "pages": [
+        "Landing",
+        "Marketplace",
+        "Inspirations",
+        "Podcasts"
+      ],
+      "estimated_time": "1 semaine"
+    },
+    "client": {
+      "priority": "HIGH",
+      "pages": [
+        "ClientDashboard",
+        "ClientInspiration",
+        "ClientPhotos",
+        "ClientVideos",
+        "ClientCatering",
+        "ClientPlaylist",
+        "ClientPodcast",
+        "ClientFloorPlan",
+        "ClientDocuments",
+        "ClientBilling",
+        "ClientNotifications",
+        "ClientMessages",
+        "ClientContracts",
+        "ClientAI"
+      ],
+      "estimated_time": "4-5 semaines"
+    },
+    "partner": {
+      "priority": "MEDIUM",
+      "pages": [
+        "PartnerDashboard",
+        "PartnerCalendar",
+        "PartnerStats",
+        "PartnerGallery",
+        "PartnerFloorPlan",
+        "PartnerBundleCreation",
+        "PartnerMarketplace",
+        "PartnerGamification",
+        "PartnerMessages",
+        "PartnerTasks",
+        "PartnerMiniSites",
+        "PartnerMiniSiteBuilder"
+      ],
+      "estimated_time": "3-4 semaines"
+    },
+    "admin": {
+      "priority": "MEDIUM",
+      "pages": [
+        "AdminDashboard",
+        "AdminPartners",
+        "AdminClients",
+        "AdminMarketplace",
+        "AdminInspirations",
+        "AdminStats",
+        "AdminAmbassadors",
+        "AdminAwards",
+        "AdminSettings"
+      ],
+      "estimated_time": "2-3 semaines"
+    }
+  }
+}

@@ -134,7 +134,10 @@ const HomePage: React.FC = () => {
         const resp = await getRequest(`${ADMIN.PAGES}/4`);
         setContent(resp?.data?.data?.content);
       } catch (error) {
-        console.error("Failed to fetch homepage content:", error);
+        // Silently handle API errors - app works with default content
+        if (import.meta.env.DEV) {
+          console.debug('API not available - using default content');
+        }
       } finally {
         setLoading(false);
       }
