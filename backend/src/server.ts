@@ -15,6 +15,18 @@ import messageRoutes from './routes/message.routes';
 import photoRoutes from './routes/photo.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import businessRoutes from './routes/business.routes';
+import videoRoutes from './routes/video.routes';
+import inspirationRoutes from './routes/inspiration.routes';
+import playlistRoutes from './routes/playlist.routes';
+import menuRoutes from './routes/menu.routes';
+import roomPlanRoutes from './routes/roomPlan.routes';
+import podcastRoutes from './routes/podcast.routes';
+import badgeRoutes from './routes/badge.routes';
+import eventSiteRoutes from './routes/eventSite.routes';
+import ambassadorRoutes from './routes/ambassador.routes';
+import disputeRoutes from './routes/dispute.routes';
+import contractRoutes from './routes/contract.routes';
+import invoiceRoutes from './routes/invoice.routes';
 
 // Import middleware
 import { errorHandler } from './middlewares/error.middleware';
@@ -67,6 +79,18 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/business', businessRoutes);
+app.use('/api/videos', videoRoutes);
+app.use('/api', inspirationRoutes);
+app.use('/api', playlistRoutes);
+app.use('/api', menuRoutes);
+app.use('/api', roomPlanRoutes);
+app.use('/api', podcastRoutes);
+app.use('/api', badgeRoutes);
+app.use('/api', eventSiteRoutes);
+app.use('/api', ambassadorRoutes);
+app.use('/api', disputeRoutes);
+app.use('/api', contractRoutes);
+app.use('/api', invoiceRoutes);
 
 // Error handling
 app.use(notFoundHandler);
