@@ -177,6 +177,8 @@ model Event {
   // Relations
   bookings          Booking[]
   tasks             Task[]
+  eventPhotos       EventPhoto[]    @relation("EventPhotos")
+  eventVideos       EventVideo[]    @relation("EventVideos")
   
   @@index([clientId])
   @@index([categoryId])
@@ -612,4 +614,495 @@ model Notification {
   @@index([isRead])
   @@index([createdAt])
   @@map("notifications")
+}
+
+// ============================================
+// EVENT PHOTOS (MODULE PHOTO)
+// ============================================
+
+enum PhotoType {
+  PRO
+  GUEST
+}
+
+enum PhotoCategory {
+  CEREMONIE
+  RECEPTION
+  SOIREE
+  DECORATION
+  PORTRAITS
+  GROUPE
+  AUTRE
+}
+
+model EventPhoto {
+  id                String          @id @default(uuid())
+  eventId           String
+  event             Event           @relation("EventPhotos", fields: [eventId], references: [id], onDelete: Cascade)
+  url               String
+  thumbnailUrl      String?
+  uploaderEmail     String
+  uploaderName      String
+  type              PhotoType       @default(GUEST)
+  category          PhotoCategory   @default(AUTRE)
+  likes             Int             @default(0)
+  likedBy           Json?           // Array of user emails
+  tags              Json?           // Array of tags
+  caption           String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([eventId])
+  @@index([type])
+  @@index([category])
+  @@map("event_photos")
+}
+
+// ============================================
+// EVENT VIDEOS (MODULE VIDÉO)
+// ============================================
+
+enum VideoStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  PUBLISHED
+}
+
+model EventVideo {
+  id                String          @id @default(uuid())
+  eventId           String
+  event             Event           @relation("EventVideos", fields: [eventId], references: [id], onDelete: Cascade)
+  title             String
+  url               String
+  thumbnailUrl      String?
+  uploaderEmail     String
+  uploaderName      String
+  type              PhotoType       @default(GUEST)
+  duration          String?         // Format: MM:SS
+  status            VideoStatus     @default(DRAFT)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  // Relations
+  comments          VideoComment[]
+  
+  @@index([eventId])
+  @@index([status])
+  @@map("event_videos")
+}
+
+model VideoComment {
+  id                String          @id @default(uuid())
+  videoId           String
+  video             EventVideo      @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  authorEmail       String
+  authorName        String
+  timecode          Int             // Position in ms
+  selectionStart    Int?            // Start of selection in ms
+  selectionEnd      Int?            // End of selection in ms
+  text              String          @db.Text
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([videoId])
+  @@index([timecode])
+  @@map("video_comments")
+}
+
+// ============================================
+// INSPIRATION (MODULE PINTEREST)
+// ============================================
+
+enum InspirationStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Inspiration {
+  id                String              @id @default(uuid())
+  title             String
+  imageUrl          String
+  category          String?
+  theme             String?
+  tags              Json?               // Array of tags
+  photographerId    String?
+  photographerName  String?
+  partners          Json?               // Array of {id, name, type}
+  likes             Int                 @default(0)
+  views             Int                 @default(0)
+  status            InspirationStatus   @default(PUBLISHED)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  userSaves         UserInspiration[]
+  
+  @@index([category])
+  @@index([status])
+  @@index([likes])
+  @@map("inspirations")
+}
+
+model UserInspiration {
+  id                String          @id @default(uuid())
+  userEmail         String
+  eventId           String?
+  inspirationId     String
+  inspiration       Inspiration     @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
+  notes             String?         @db.Text
+  createdAt         DateTime        @default(now())
+  
+  @@unique([userEmail, inspirationId])
+  @@index([userEmail])
+  @@index([eventId])
+  @@map("user_inspirations")
+}
+
+model InspirationCategory {
+  id                String          @id @default(uuid())
+  name              String          @unique
+  slug              String          @unique
+  count             Int             @default(0)
+  active            Boolean         @default(true)
+  order             Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([slug])
+  @@index([active])
+  @@map("inspiration_categories")
+}
+
+model Trend {
+  id                String          @id @default(uuid())
+  name              String          @unique
+  icon              String?         // Emoji or icon name
+  active            Boolean         @default(true)
+  order             Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([active])
+  @@map("trends")
+}
+
+// ============================================
+// PLAYLIST DJ (MODULE DJ/PLAYLIST)
+// ============================================
+
+enum PlaylistStatus {
+  DRAFT
+  SHARED
+  CONFIRMED
+}
+
+model Playlist {
+  id                String          @id @default(uuid())
+  eventId           String
+  name              String
+  songs             Json            // Array of {title, artist, duration, moment}
+  avoidSongs        Json?           // Array of song names to avoid
+  mood              String?
+  djPartnerId       String?
+  status            PlaylistStatus  @default(DRAFT)
+  notes             String?         @db.Text
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([eventId])
+  @@index([djPartnerId])
+  @@map("playlists")
+}
+
+// ============================================
+// MENU & TABLES (MODULE MENU)
+// ============================================
+
+enum MenuCategory {
+  ENTREE
+  PLAT
+  DESSERT
+  BOISSON
+  AUTRE
+}
+
+model MenuItem {
+  id                String          @id @default(uuid())
+  eventId           String
+  name              String
+  category          MenuCategory
+  description       String?         @db.Text
+  allergens         Json?           // Array of allergen names
+  dietaryTags       Json?           // Array: végétarien, vegan, sans gluten, etc.
+  pricePerPerson    Float?
+  available         Boolean         @default(true)
+  imageUrl          String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([eventId])
+  @@index([category])
+  @@map("menu_items")
+}
+
+model GuestMenuChoice {
+  id                String          @id @default(uuid())
+  eventId           String
+  guestName         String
+  guestEmail        String?
+  starterId         String?
+  mainCourseId      String?
+  dessertId         String?
+  allergies         String?         @db.Text
+  specialRequests   String?         @db.Text
+  tableNumber       Int?
+  confirmed         Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([eventId])
+  @@index([guestEmail])
+  @@map("guest_menu_choices")
+}
+
+// ============================================
+// PLAN DE SALLE (MODULE FLOOR PLAN)
+// ============================================
+
+model RoomPlan {
+  id                String          @id @default(uuid())
+  eventId           String?
+  name              String
+  width             Float           // In meters
+  length            Float           // In meters
+  capacity          Int
+  floorMaterial     String?
+  wallMaterial      String?
+  elements          Json            // Array of room elements
+  imageUrl          String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([eventId])
+  @@map("room_plans")
+}
+
+// ============================================
+// PODCAST (MODULE PODCAST)
+// ============================================
+
+enum PodcastType {
+  PODCAST
+  TALKSHOW
+}
+
+enum PodcastTheme {
+  MARIAGE
+  TEMOIGNAGES
+  CONSEILS_PRO
+  TENDANCES
+  ORGANISATION
+  BUDGET
+  DECORATION
+  AUTRE
+}
+
+model Podcast {
+  id                String          @id @default(uuid())
+  title             String
+  description       String?         @db.Text
+  provider          String?
+  type              PodcastType     @default(PODCAST)
+  audioUrl          String
+  coverEmoji        String?
+  coverImageUrl     String?
+  duration          String?         // Format: HH:MM:SS
+  theme             PodcastTheme    @default(AUTRE)
+  listens           Int             @default(0)
+  rating            Float           @default(0)
+  ratingsCount      Int             @default(0)
+  status            InspirationStatus @default(PUBLISHED)
+  publishedAt       DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([theme])
+  @@index([status])
+  @@map("podcasts")
+}
+
+// ============================================
+// MINI-SITE ÉVÉNEMENTIEL (MODULE MINI-SITE)
+// ============================================
+
+enum SiteTheme {
+  ELEGANT
+  ROMANTIC
+  MODERN
+  BOHEME
+}
+
+model EventSite {
+  id                String          @id @default(uuid())
+  eventId           String          @unique
+  slug              String          @unique
+  title             String?
+  coverImage        String?
+  welcomeMessage    String?         @db.Text
+  modules           Json            // {guestBook: bool, photoVideo: bool, menuChoice: bool, etc.}
+  crowdfundingUrl   String?
+  theme             SiteTheme       @default(ELEGANT)
+  primaryColor      String          @default("#1e3a5f")
+  schedule          Json?           // Array of {time, title, location}
+  customCss         String?         @db.Text
+  published         Boolean         @default(false)
+  publishedAt       DateTime?
+  views             Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([slug])
+  @@index([published])
+  @@map("event_sites")
+}
+
+// ============================================
+// AMBASSADEURS (MODULE AMBASSADEURS)
+// ============================================
+
+enum AmbassadorStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Ambassador {
+  id                String            @id @default(uuid())
+  partnerId         String?
+  userEmail         String            @unique
+  name              String
+  zone              String
+  departments       String            // CSV: "75,77,78"
+  partnersRecruited Int               @default(0)
+  commissionEarned  Float             @default(0)
+  commissionRate    Float             @default(10)
+  status            AmbassadorStatus  @default(ACTIVE)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@index([zone])
+  @@index([status])
+  @@map("ambassadors")
+}
+
+// ============================================
+// BADGES & GAMIFICATION (MODULE BADGES)
+// ============================================
+
+enum BadgeRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model Badge {
+  id                String          @id @default(uuid())
+  name              String          @unique
+  description       String?         @db.Text
+  icon              String?         // Lucide icon name
+  criteria          String?         @db.Text
+  pointsValue       Int             @default(0)
+  rarity            BadgeRarity     @default(COMMON)
+  active            Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  // Relations
+  partnerBadges     PartnerBadge[]
+  
+  @@index([rarity])
+  @@index([active])
+  @@map("badges")
+}
+
+model PartnerBadge {
+  id                String          @id @default(uuid())
+  partnerId         String
+  badgeId           String
+  badge             Badge           @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedDate        DateTime        @default(now())
+  
+  @@unique([partnerId, badgeId])
+  @@index([partnerId])
+  @@map("partner_badges")
+}
+
+// ============================================
+// LITIGES (MODULE DISPUTES)
+// ============================================
+
+enum DisputeStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model Dispute {
+  id                String          @id @default(uuid())
+  bookingId         String
+  clientEmail       String
+  clientName        String
+  partnerId         String
+  partnerName       String
+  reason            String
+  description       String          @db.Text
+  status            DisputeStatus   @default(OPEN)
+  resolution        String?         @db.Text
+  resolvedDate      DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([bookingId])
+  @@index([status])
+  @@map("disputes")
+}
+
+// ============================================
+// CONFIGURATION PLATEFORME
+// ============================================
+
+model PlatformConfig {
+  id                String          @id @default(uuid())
+  configKey         String          @unique
+  platformName      String?
+  supportEmail      String?
+  supportPhone      String?
+  platformCommission Float          @default(15)
+  ambassadorCommission Float        @default(10)
+  notifications     Json?           // {new_partners: bool, disputes: bool, etc.}
+  security          Json?           // {require_2fa_admin: bool, etc.}
+  features          Json?           // Feature flags
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@map("platform_config")
+}
+
+// ============================================
+// ADVANTAGE CONFIG
+// ============================================
+
+model AdvantageConfig {
+  id                String          @id @default(uuid())
+  link              String
+  description       String?         @db.Text
+  active            Boolean         @default(true)
+  order             Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  @@index([active])
+  @@map("advantage_configs")
 }
