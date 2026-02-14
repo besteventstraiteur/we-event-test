@@ -39,9 +39,14 @@ function AppContent() {
   ];
   useEffect(() => {
     const initNotifications = async () => {
-      const token = await requestNotificationPermission();
-      if (token) {
-        await saveFcmToken(token);
+      try {
+        const token = await requestNotificationPermission();
+        if (token) {
+          // TODO: Implement saveFcmToken when backend is ready
+          console.log('FCM token:', token);
+        }
+      } catch (error) {
+        console.error('Notification init failed:', error);
       }
     };
 
