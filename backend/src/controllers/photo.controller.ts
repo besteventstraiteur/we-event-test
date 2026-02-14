@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient, PhotoType, PhotoCategory } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { PhotoType, PhotoCategory } from '@prisma/client';
+import { prisma } from '../prisma';
 
 /**
  * GET /api/events/:eventId/photos

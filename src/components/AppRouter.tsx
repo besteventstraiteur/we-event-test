@@ -60,6 +60,8 @@ import FloorPlanModuleTestPage from "../pages/FloorPlanModuleTestPage";
 import MiniSiteModuleTestPage from "../pages/MiniSiteModuleTestPage";
 import AmbassadorModuleTestPage from "../pages/AmbassadorModuleTestPage";
 import AnalyticsModuleTestPage from "../pages/AnalyticsModuleTestPage";
+// New: 13 Modules Test Page
+import ModulesTestPage from "../pages/ModulesTestPage";
 
 const AppRouter: React.FC = () => {
   return (
@@ -67,6 +69,8 @@ const AppRouter: React.FC = () => {
       <Routes>
         <Route element={<WebsiteLayout />}>
           <Route path="/" element={<HomePage />} />
+          {/* 🧪 NEW: 13 Modules Complete Test */}
+          <Route path="/test/all-modules" element={<ModulesTestPage />} />
           {/* Test Module Routes - All 23 Modules */}
           <Route path="/test/global-system" element={<GlobalSystemTestPage />} />
           <Route path="/test/event-module" element={<EventModuleTestPage />} />

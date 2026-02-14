@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { prisma } from '../server';
+// import { prisma } from '../prisma';
 import { AuthRequest } from '../middlewares/auth.middleware';
 
 // Get all packages with filtering

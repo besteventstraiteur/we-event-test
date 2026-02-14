@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { prisma } from '../server';
+// import { prisma } from '../prisma';
 
 /**
  * GET /api/events/:eventId/menu-items

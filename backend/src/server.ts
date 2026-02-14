@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './prisma';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -36,9 +36,6 @@ import { notFoundHandler } from './middlewares/notFound.middleware';
 import { initializeSocket } from './socket/socket.handler';
 
 dotenv.config();
-
-// Initialize Prisma Client
-export const prisma = new PrismaClient();
 
 // Create Express app
 const app: Application = express();
@@ -116,3 +113,4 @@ process.on('SIGTERM', async () => {
 });
 
 export { io };
+export { prisma } from './prisma';
