@@ -13,6 +13,7 @@ import { ChevronsUp } from "lucide-react";
 import { motion } from "motion/react";
 import ScrollToTop from "./components/ui/scrooltotop";
 import Loaderimage from "../src/assets/images/Loader.gif";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { useLocation } from "react-router-dom";
 import { requestNotificationPermission } from "./utils/notifications";
 
@@ -110,13 +111,15 @@ function AppContent() {
           )}
 
           <Suspense fallback={<LazyLoadingFallback />}>
-            <div id="app-content">
-              <MetaTags
-                title="Bienvenue sur We Event"
-                description="WeEvent est la plateforme tout-en-un pour organiser vos événements."
-              />
-              <AppRouter />
-            </div>
+            <ErrorBoundary>
+              <div id="app-content">
+                <MetaTags
+                  title="Bienvenue sur We Event"
+                  description="WeEvent est la plateforme tout-en-un pour organiser vos événements."
+                />
+                <AppRouter />
+              </div>
+            </ErrorBoundary>
           </Suspense>
         </ToastProvider>
       </PersistGate>
